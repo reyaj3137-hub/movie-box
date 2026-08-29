@@ -6,10 +6,10 @@ document.addEventListener("DOMContentLoaded", () => {
     fetchVideos();
 });
 
-// গুগল ড্রাইভ থেকে স্বয়ংক্রিয়ভাবে ভিডিও লোড করার ফাংশন
+// স্বয়ংক্রিয়ভাবে ভিডিও লোড করার ফাংশন
 async function fetchVideos() {
     const container = document.getElementById("videoContainer");
-    container.innerHTML = '<div class="status-msg">ড্রাইভ থেকে ভিডিও লোড হচ্ছে...</div>';
+    container.innerHTML = '<div class="status-msg">ভিডিও লোড হচ্ছে...</div>';
 
     try {
         const response = await fetch(APPS_SCRIPT_URL);
@@ -21,13 +21,13 @@ async function fetchVideos() {
     }
 }
 
-// ওয়েবসাইটে ভিডিও রেন্ডার করা (Google Drive Player সহ)
+// ওয়েবসাইটে ভিডিও রেন্ডার করা (গুগল ড্রাইভ লিঙ্ক ও রিডাইরেক্ট ব্লক সহ)
 function renderVideos(videos) {
     const container = document.getElementById("videoContainer");
     container.innerHTML = "";
 
     if (!videos || videos.length === 0) {
-        container.innerHTML = '<div class="status-msg">গুগল ড্রাইভে কোনো ভিডিও পাওয়া যায়নি। Movie Box Videos ফোল্ডারে ভিডিও আপলোড করুন!</div>';
+        container.innerHTML = '<div class="status-msg">কোনো ভিডিও পাওয়া যায়নি। ফোল্ডারে ভিডিও আপলোড করুন!</div>';
         return;
     }
 
@@ -38,8 +38,10 @@ function renderVideos(videos) {
         const card = document.createElement("div");
         card.className = "video-card";
         card.innerHTML = `
-            <div class="video-player-wrapper">
-                <iframe src="https://drive.google.com/file/d/${video.driveId}/preview" allow="autoplay" frameborder="0" style="width:100%; height:220px; border:none; border-radius:8px;"></iframe>
+            <div class="video-player-wrapper" style="position: relative; overflow: hidden; border-radius: 8px;">
+                <!-- Google Drive Pop-out Block Layer -->
+                <div style="position: absolute; top: 0; right: 0; width: 70px; height: 55px; z-index: 10; background: transparent;"></div>
+                <iframe src="https://drive.google.com/file/d/${video.driveId}/preview" allow="autoplay; fullscreen" allowfullscreen="true" frameborder="0" style="width:100%; height:230px; border:none; border-radius:8px;"></iframe>
             </div>
             <div class="video-info">
                 <div class="video-title">${cleanTitle}</div>
