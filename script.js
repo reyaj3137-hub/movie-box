@@ -21,7 +21,7 @@ async function fetchVideos() {
     }
 }
 
-// ওয়েবসাইটে ভিডিও রেন্ডার করা (গুগল ড্রাইভ লিঙ্ক ও রিডাইরেক্ট ব্লক সহ)
+// ওয়েবসাইটে ভিডিও রেন্ডার করা (১৬:৯ প্লেয়ার ও গুগল ড্রাইভ লিঙ্ক সম্পূর্ণ ব্লক সহ)
 function renderVideos(videos) {
     const container = document.getElementById("videoContainer");
     container.innerHTML = "";
@@ -38,10 +38,11 @@ function renderVideos(videos) {
         const card = document.createElement("div");
         card.className = "video-card";
         card.innerHTML = `
-            <div class="video-player-wrapper" style="position: relative; overflow: hidden; border-radius: 8px;">
-                <!-- Google Drive Pop-out Block Layer -->
-                <div style="position: absolute; top: 0; right: 0; width: 70px; height: 55px; z-index: 10; background: transparent;"></div>
-                <iframe src="https://drive.google.com/file/d/${video.driveId}/preview" allow="autoplay; fullscreen" allowfullscreen="true" frameborder="0" style="width:100%; height:230px; border:none; border-radius:8px;"></iframe>
+            <div class="video-player-wrapper" style="position: relative; width: 100%; aspect-ratio: 16 / 9; background: #000; border-radius: 12px; overflow: hidden;">
+                <!-- Google Drive Title & Pop-out (↗) Complete Blocking Layer -->
+                <div style="position: absolute; top: 0; left: 0; width: 100%; height: 55px; z-index: 20; background: linear-gradient(180deg, rgba(15,15,20,0.95) 0%, rgba(15,15,20,0.7) 60%, transparent 100%); pointer-events: auto;" onclick="event.stopPropagation(); event.preventDefault();"></div>
+                
+                <iframe src="https://drive.google.com/file/d/${video.driveId}/preview" allow="autoplay; fullscreen" allowfullscreen="true" frameborder="0" style="width:100%; height:100%; border:none;"></iframe>
             </div>
             <div class="video-info">
                 <div class="video-title">${cleanTitle}</div>
@@ -87,4 +88,4 @@ function toggleLike(videoId, btnElement) {
         btnElement.classList.add("liked");
         countSpan.textContent = currentLikes + 1;
     }
-}
+                    }
