@@ -1,41 +1,39 @@
-// Google Apps Script Endpoint (Step 4-এ লিংক বসানো হবে)
-const APPS_SCRIPT_URL = "YOUR_APPS_SCRIPT_URL_HERE";
+// Google Apps Script Backend Link
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzFE7Hvuw5tUuitkReeNH4DIwJqDGEfIxCwpGt2TF45ZV3hQOv1Eb8S_qqm14_NCZzP/exec";
 const LIKE_STORAGE_KEY = "movie_box_likes_";
 
 document.addEventListener("DOMContentLoaded", () => {
     fetchVideos();
 });
 
-// ভিডিও ডেটা লোড করার ফাংশন
+// গুগল ড্রাইভ থেকে স্বয়ংক্রিয়ভাবে ভিডিও লোড করার ফাংশন
 async function fetchVideos() {
     const container = document.getElementById("videoContainer");
+    container.innerHTML = '<div class="status-msg">ড্রাইভ থেকে ভিডিও লোড হচ্ছে...</div>';
 
-    // ডেমো ভিডিও ডেটা (Step 4-এ গুগল ড্রাইভ থেকে স্বয়ংক্রিয়ভাবে আসবে)
-    const sampleVideos = [
-        {
-            id: "1",
-            title: "Spider-Man No Way Home.mp4",
-            driveId: "SAMPLE_DRIVE_FILE_ID",
-            likes: 0
-        }
-    ];
-
-    renderVideos(sampleVideos);
+    try {
+        const response = await fetch(APPS_SCRIPT_URL);
+        const videos = await response.json();
+        renderVideos(videos);
+    } catch (error) {
+        console.error("Error fetching videos:", error);
+        container.innerHTML = '<div class="status-msg">ভিডিও লোড করতে সমস্যা হয়েছে। অনুগ্রহ করে পেজ রিফ্রেশ করুন।</div>';
+    }
 }
 
-// ওয়েবসাইটে ভিডিও কার্ড রেন্ডার করা
+// ওয়েবসাইটে ভিডিও রেন্ডার করা
 function renderVideos(videos) {
     const container = document.getElementById("videoContainer");
     container.innerHTML = "";
 
     if (!videos || videos.length === 0) {
-        container.innerHTML = '<div class="status-msg">কোনো ভিডিও পাওয়া যায়নি।</div>';
+        container.innerHTML = '<div class="status-msg">গুগল ড্রাইভে কোনো ভিডিও পাওয়া যায়নি। Movie Box Videos ফোল্ডারে ভিডিও আপলোড করুন!</div>';
         return;
     }
 
     videos.forEach(video => {
-        // টাইটেল থেকে এক্সটেনশন বাদ দেওয়া (.mp4, .mkv ইত্যাদি)
-        const cleanTitle = video.title.replace(/\.(mp4|mkv|mov|avi|flv)$/i, "");
+        // ফাইল এক্সটেনশন বাদ দিয়ে পরিষ্কার টাইটেল তৈরি
+        const cleanTitle = video.title.replace(/\.(mp4|mkv|mov|avi|webm)$/i, "");
         const hasLiked = localStorage.getItem(LIKE_STORAGE_KEY + video.id);
 
         const card = document.createElement("div");
@@ -61,7 +59,7 @@ function renderVideos(videos) {
     });
 }
 
-// ভিডিও সার্চ সিস্টেম
+// ভিডিও সার্চ করার লজিক
 function filterVideos() {
     const query = document.getElementById("searchInput").value.toLowerCase();
     const cards = document.querySelectorAll(".video-card");
@@ -76,7 +74,7 @@ function filterVideos() {
     });
 }
 
-// এক ডিভাইস থেকে একবার লাইক দেওয়ার লজিক
+// এক ডিভাইসে একবার লাইক দেওয়ার লজিক
 function toggleLike(videoId, btnElement) {
     const hasLiked = localStorage.getItem(LIKE_STORAGE_KEY + videoId);
     const countSpan = btnElement.querySelector(".like-count");
@@ -91,4 +89,4 @@ function toggleLike(videoId, btnElement) {
         btnElement.classList.add("liked");
         countSpan.textContent = currentLikes + 1;
     }
-                                          }
+            }
