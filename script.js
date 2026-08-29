@@ -21,7 +21,7 @@ async function fetchVideos() {
     }
 }
 
-// ওয়েবসাইটে ভিডিও রেন্ডার করা
+// ওয়েবসাইটে ভিডিও রেন্ডার করা (Google Drive Player সহ)
 function renderVideos(videos) {
     const container = document.getElementById("videoContainer");
     container.innerHTML = "";
@@ -32,7 +32,6 @@ function renderVideos(videos) {
     }
 
     videos.forEach(video => {
-        // ফাইল এক্সটেনশন বাদ দিয়ে পরিষ্কার টাইটেল তৈরি
         const cleanTitle = video.title.replace(/\.(mp4|mkv|mov|avi|webm)$/i, "");
         const hasLiked = localStorage.getItem(LIKE_STORAGE_KEY + video.id);
 
@@ -40,10 +39,7 @@ function renderVideos(videos) {
         card.className = "video-card";
         card.innerHTML = `
             <div class="video-player-wrapper">
-                <video controls controlslist="nodownload" preload="metadata">
-                    <source src="https://drive.google.com/uc?export=download&id=${video.driveId}" type="video/mp4">
-                    আপনার ব্রাউজারে ভিডিও সাপোর্ট করছে না।
-                </video>
+                <iframe src="https://drive.google.com/file/d/${video.driveId}/preview" allow="autoplay" frameborder="0" style="width:100%; height:220px; border:none; border-radius:8px;"></iframe>
             </div>
             <div class="video-info">
                 <div class="video-title">${cleanTitle}</div>
@@ -89,4 +85,4 @@ function toggleLike(videoId, btnElement) {
         btnElement.classList.add("liked");
         countSpan.textContent = currentLikes + 1;
     }
-            }
+}
