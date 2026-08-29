@@ -1,0 +1,149 @@
+/* Core Styling & Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+body {
+    background-color: #0f0f11;
+    color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    padding-bottom: 20px;
+}
+
+/* Floating Ad Placeholder */
+.floating-ad-wrapper {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    width: 100%;
+    max-width: 480px;
+    background-color: #1a1a1e;
+    text-align: center;
+}
+
+/* Header & Text Logo */
+.header {
+    width: 100%;
+    padding: 15px 0;
+    text-align: center;
+    background-color: #16161a;
+    border-bottom: 1px solid #282830;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: 900;
+    letter-spacing: 3px;
+    color: #ff2e63;
+    text-transform: uppercase;
+}
+
+/* Search Bar */
+.search-container {
+    width: 90%;
+    max-width: 500px;
+    margin: 15px 0;
+}
+
+.search-container input {
+    width: 100%;
+    padding: 12px 16px;
+    border-radius: 8px;
+    border: 1px solid #33333f;
+    background-color: #1a1a20;
+    color: #fff;
+    font-size: 15px;
+    outline: none;
+}
+
+.search-container input:focus {
+    border-color: #ff2e63;
+}
+
+/* Video Feed & Cards */
+.video-container {
+    width: 100%;
+    max-width: 500px;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    padding: 0 10px;
+}
+
+.video-card {
+    background-color: #16161a;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #262630;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Responsive Player (No Video Cropping) */
+.video-player-wrapper {
+    width: 100%;
+    background-color: #000000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+video {
+    width: 100%;
+    max-height: 75vh;
+    object-fit: contain;
+    outline: none;
+}
+
+/* Title & Actions */
+.video-info {
+    padding: 12px 15px;
+}
+
+.video-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #e0e0e0;
+    word-break: break-word;
+}
+
+.like-btn {
+    background: #252530;
+    border: none;
+    color: #ffffff;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.2s ease;
+}
+
+.like-btn.liked {
+    background: #ff2e63;
+}
+
+/* Adsterra Thin Banner Placement */
+.ad-banner-wrapper {
+    width: 100%;
+    padding: 8px 0;
+    background-color: #111115;
+    text-align: center;
+    border-top: 1px solid #22222a;
+    min-height: 50px;
+}
+
+.status-msg {
+    text-align: center;
+    padding: 40px 0;
+    color: #888;
+  }
