@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
     injectSocialBar();
 });
 
-// সোশ্যাল বার অ্যাড স্বয়ংক্রিয়ভাবে ইনজেক্ট করার ফাংশন
+// সোশ্যাল বার অ্যাড ইনজেকশন
 function injectSocialBar() {
     const script = document.createElement("script");
     script.src = "https://pl31090742.profitableratecpmnetwork.com/29/72/79/297279fb120de6254b603629a521f59c.js";
@@ -49,7 +49,7 @@ function formatNumber(num) {
     return num;
 }
 
-// ওয়েবসাইটে ভিডিও রেন্ডার করা
+// থাম্বনেইল সহ ভিডিও রেন্ডার করা (ব্ল্যাক স্ক্রিন সমস্যার চূড়ান্ত সমাধান)
 function renderVideos(videos) {
     const container = document.getElementById("videoContainer");
     container.innerHTML = "";
@@ -67,26 +67,26 @@ function renderVideos(videos) {
         const storedLikes = localStorage.getItem(LIKE_STORAGE_KEY + video.id + "_count");
         const totalLikes = storedLikes ? parseInt(storedLikes) : stats.likes;
 
+        // গুগল ড্রাইভের রিয়েল থাম্বনেইল লিংক
+        const thumbnailUrl = `https://drive.google.com/thumbnail?id=${video.driveId}&sz=w1000`;
+
         const card = document.createElement("div");
         card.className = "video-card";
         card.innerHTML = `
-            <div class="video-player-wrapper" style="position: relative; width: 100%; height: 320px; background: #000; border-radius: 12px; overflow: hidden;">
-                <div style="position: absolute; top: 0; left: 0; width: 100%; height: 50px; z-index: 20; background: linear-gradient(180deg, rgba(15,15,20,0.95) 0%, transparent 100%); pointer-events: auto;" onclick="event.stopPropagation(); event.preventDefault();"></div>
+            <div class="video-player-wrapper" style="position: relative; width: 100%; height: 320px; background: #111; border-radius: 12px; overflow: hidden; cursor: pointer;" onclick="playVideo(this, '${video.driveId}')">
+                <!-- Video Thumbnail Image -->
+                <img src="${thumbnailUrl}" alt="Thumbnail" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=640&auto=format&fit=crop'">
                 
-                <iframe class="drive-iframe" data-src="https://drive.google.com/file/d/${video.driveId}/preview" 
-                        src="https://drive.google.com/file/d/${video.driveId}/preview"
-                        loading="lazy"
-                        allow="autoplay; fullscreen" 
-                        allowfullscreen="true" 
-                        frameborder="0" 
-                        style="position: absolute; top: -50px; left: 0; width: 100%; height: calc(100% + 50px); border: none;">
-                </iframe>
+                <!-- Play Button Overlay -->
+                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 65px; height: 65px; background: rgba(255, 0, 80, 0.9); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(0,0,0,0.6);">
+                    <div style="width: 0; height: 0; border-top: 12px solid transparent; border-bottom: 12px solid transparent; border-left: 22px solid #fff; margin-left: 4px;"></div>
+                </div>
             </div>
             <div class="video-info">
                 <div class="video-title">${cleanTitle}</div>
                 <div class="video-meta-row" style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
                     <span class="view-count" style="color: #aaa; font-size: 13px;">👁️ ${formatNumber(stats.views)} Views</span>
-                    <button class="like-btn ${hasLiked ? 'liked' : ''}" onclick="toggleLike('${video.id}', this)">
+                    <button class="like-btn ${hasLiked ? 'liked' : ''}" onclick="event.stopPropagation(); toggleLike('${video.id}', this)">
                         ❤️ <span class="like-count">${formatNumber(totalLikes)}</span> Like
                     </button>
                 </div>
@@ -94,7 +94,7 @@ function renderVideos(videos) {
             <div class="ad-banner-wrapper" style="margin-top: 10px; text-align: center;"></div>
         `;
 
-        // ব্যানার অ্যাড কোড প্রফেশনালি ইনজেক্ট করার লজিক
+        // ব্যানার অ্যাড প্রফেশনালি ইনজেক্ট করা
         const adWrapper = card.querySelector('.ad-banner-wrapper');
         const s1 = document.createElement('script');
         s1.innerHTML = `atOptions = { 'key' : '1519cc1e96aca6e61289dafed23cfc54', 'format' : 'iframe', 'height' : 50, 'width' : 320, 'params' : {} };`;
@@ -108,34 +108,20 @@ function renderVideos(videos) {
 
         container.appendChild(card);
     });
-
-    setupVideoScrollControl();
 }
 
-// স্ক্রিন থেকে ভিডিও সরে গেলে বা ফিরে আসলে অটো পজ/প্লে কন্ট্রোল
-function setupVideoScrollControl() {
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            const iframe = entry.target.querySelector('.drive-iframe');
-            if (iframe) {
-                if (!entry.isIntersecting) {
-                    if (iframe.src) {
-                        iframe.dataset.currentSrc = iframe.src;
-                        iframe.src = "";
-                    }
-                } else {
-                    if (!iframe.src && iframe.dataset.currentSrc) {
-                        iframe.src = iframe.dataset.currentSrc;
-                    }
-                }
-            }
-        });
-    }, { threshold: 0.5 });
-
-    document.querySelectorAll('.video-card').forEach(card => {
-        observer.observe(card);
-    });
-}
+// থাম্বনেইলে ক্লিক করলে ভিডিও ইনস্ট্যান্ট প্লে হওয়ার লজিক
+window.playVideo = function(wrapperElement, driveId) {
+    wrapperElement.innerHTML = `
+        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 50px; z-index: 20; background: linear-gradient(180deg, rgba(15,15,20,0.95) 0%, transparent 100%); pointer-events: auto;" onclick="event.stopPropagation(); event.preventDefault();"></div>
+        <iframe src="https://drive.google.com/file/d/${driveId}/preview?autoplay=1" 
+                allow="autoplay; fullscreen" 
+                allowfullscreen="true" 
+                frameborder="0" 
+                style="position: absolute; top: -50px; left: 0; width: 100%; height: calc(100% + 50px); border: none;">
+        </iframe>
+    `;
+};
 
 // সার্চ বক্সের পরিবর্তে বাংলা ভাইরাল টেক্সট হেডার আপডেট
 document.addEventListener("DOMContentLoaded", () => {
