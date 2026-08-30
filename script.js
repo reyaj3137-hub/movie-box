@@ -49,7 +49,7 @@ function formatNumber(num) {
     return num;
 }
 
-// ওয়েবসাইটে ভিডিও রেন্ডার করা এবং স্ক্রল করলে ভিডিও পজ করার লজিক
+// ওয়েবসাইটে ভিডিও রেন্ডার করা
 function renderVideos(videos) {
     const container = document.getElementById("videoContainer");
     container.innerHTML = "";
@@ -73,7 +73,8 @@ function renderVideos(videos) {
             <div class="video-player-wrapper" style="position: relative; width: 100%; height: 320px; background: #000; border-radius: 12px; overflow: hidden;">
                 <div style="position: absolute; top: 0; left: 0; width: 100%; height: 50px; z-index: 20; background: linear-gradient(180deg, rgba(15,15,20,0.95) 0%, transparent 100%); pointer-events: auto;" onclick="event.stopPropagation(); event.preventDefault();"></div>
                 
-                <iframe class="drive-iframe" src="https://drive.google.com/file/d/${video.driveId}/preview" 
+                <iframe class="drive-iframe" data-src="https://drive.google.com/file/d/${video.driveId}/preview" 
+                        src="https://drive.google.com/file/d/${video.driveId}/preview"
                         loading="lazy"
                         allow="autoplay; fullscreen" 
                         allowfullscreen="true" 
@@ -90,55 +91,57 @@ function renderVideos(videos) {
                     </button>
                 </div>
             </div>
-            <div class="ad-banner-wrapper" style="margin-top: 10px; text-align: center;">
-                <script>
-                  atOptions = {
-                    'key' : '1519cc1e96aca6e61289dafed23cfc54',
-                    'format' : 'iframe',
-                    'height' : 50,
-                    'width' : 320,
-                    'params' : {}
-                  };
-                </script>
-                <script src="https://www.highrevenueformat.com/1519cc1e96aca6e61289dafed23cfc54/invoke.js"></script>
-            </div>
+            <div class="ad-banner-wrapper" style="margin-top: 10px; text-align: center;"></div>
         `;
+
+        // ব্যানার অ্যাড কোড প্রফেশনালি ইনজেক্ট করার লজিক
+        const adWrapper = card.querySelector('.ad-banner-wrapper');
+        const s1 = document.createElement('script');
+        s1.innerHTML = `atOptions = { 'key' : '1519cc1e96aca6e61289dafed23cfc54', 'format' : 'iframe', 'height' : 50, 'width' : 320, 'params' : {} };`;
+        
+        const s2 = document.createElement('script');
+        s2.src = "https://www.highrevenueformat.com/1519cc1e96aca6e61289dafed23cfc54/invoke.js";
+        s2.async = true;
+
+        adWrapper.appendChild(s1);
+        adWrapper.appendChild(s2);
+
         container.appendChild(card);
     });
 
-    // স্ক্রল করার সময় ব্যাকগ্রাউন্ড ভিডিও অটো পজ করার অবজারভার
     setupVideoScrollControl();
 }
 
-// স্ক্রিন থেকে ভিডিও সরে গেলে সোর্স রিলোড বা পজ করার স্মার্ট মেকানিজম
+// স্ক্রিন থেকে ভিডিও সরে গেলে বা ফিরে আসলে অটো পজ/প্লে কন্ট্রোল
 function setupVideoScrollControl() {
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             const iframe = entry.target.querySelector('.drive-iframe');
             if (iframe) {
-                const src = iframe.src;
                 if (!entry.isIntersecting) {
-                    // স্ক্রিনের বাইরে চলে গেলে ভিডিও রিফ্রেশ করে অফ করে দেওয়া
-                    iframe.src = "";
-                } else if (!iframe.src) {
-                    // স্ক্রিনে ফিরে আসলে আবার লোড করা
-                    const parentCard = entry.target;
-                    // রি-অ্যাসাইন সোর্স লজিক প্রয়োজন হলে হ্যান্ডেল করা যায়
+                    if (iframe.src) {
+                        iframe.dataset.currentSrc = iframe.src;
+                        iframe.src = "";
+                    }
+                } else {
+                    if (!iframe.src && iframe.dataset.currentSrc) {
+                        iframe.src = iframe.dataset.currentSrc;
+                    }
                 }
             }
         });
-    }, { threshold: 0.6 });
+    }, { threshold: 0.5 });
 
     document.querySelectorAll('.video-card').forEach(card => {
         observer.observe(card);
     });
 }
 
-// সার্চ বক্সের পরিবর্তে বাংলা টেক্সট হেডার আপডেট করার জন্য ইনডেক্স ফাইল হ্যান্ডলার
+// সার্চ বক্সের পরিবর্তে বাংলা ভাইরাল টেক্সট হেডার আপডেট
 document.addEventListener("DOMContentLoaded", () => {
     const searchInput = document.getElementById("searchInput");
     if (searchInput) {
-        searchInput.outerHTML = '<div style="text-align: center; color: #ff3366; font-size: 18px; font-weight: bold; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 8px; margin-bottom: 15px;">বাংলা ভাইরাল ভিডিও 🔥🍆💦</div>';
+        searchInput.outerHTML = '<div style="text-align: center; color: #ff3366; font-size: 18px; font-weight: bold; padding: 12px; background: rgba(255,255,255,0.05); border-radius: 8px; margin-bottom: 15px;">বাংলা ভাইরাল ভিডিও 🔥🍆💦</div>';
     }
 });
 
@@ -161,4 +164,4 @@ function toggleLike(videoId, btnElement) {
         btnElement.classList.add("liked");
         countSpan.textContent = formatNumber(currentLikes + 1);
     }
-                                    }
+}
