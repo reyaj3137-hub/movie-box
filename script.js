@@ -1,14 +1,15 @@
 // Google Apps Script Backend Link
 const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzFE7Hvuw5tUuitkReeNH4DIwJqDGEfIxCwpGt2TF45ZV3hQOv1Eb8S_qqm14_NCZzP/exec";
 const LIKE_STORAGE_KEY = "movie_box_likes_";
+const CACHE_KEY = "movie_box_cache_data";
 
 document.addEventListener("DOMContentLoaded", () => {
     injectGlobalStyles();
-    fetchVideos();
+    loadVideosInstantly();
     injectSocialBar();
 });
 
-// স্টাইল ইনজেকশন (লাইক বাটন ও অন্যান্য ডিজাইন স্মুথ রাখার জন্য)
+// গ্লোবাল স্টাইল ইনজেকশন
 function injectGlobalStyles() {
     const styleTag = document.createElement('style');
     styleTag.innerHTML = `
@@ -29,19 +30,52 @@ function injectSocialBar() {
     document.body.appendChild(script);
 }
 
-// স্বয়ংক্রিয়ভাবে ভিডিও লোড করার ফাংশন (খালি বক্স ফিল্টার সহ)
+// ইনস্ট্যান্ট লোডিং (ক্যাশ মেমোরি থেকে দ্রুত ভিডিও শো করার সিস্টেম)
+function loadVideosInstantly() {
+    const cachedData = sessionStorage.getItem(CACHE_KEY);
+    if (cachedData) {
+        try {
+            const videos = JSON.parse(cachedData);
+            renderVideos(videos);
+            // ব্যাকগ্রাউন্ডে ডাটা আপডেট করে নেওয়া
+            fetchVideosBackground();
+            return;
+        } catch (e) {
+            console.error("Cache read error", e);
+        }
+    }
+    fetchVideos();
+}
+
+// সরাসরি সার্ভার থেকে ভিডিও ফেচ করা
 async function fetchVideos() {
     const container = document.getElementById("videoContainer");
-    container.innerHTML = '<div class="status-msg" style="color: #fff; text-align: center; padding: 20px;">ভিডিও লোড হচ্ছে...</div>';
+    container.innerHTML = '<div class="status-msg" style="color: #fff; text-align: center; padding: 30px; font-size: 15px;">ভিডিও লোড হচ্ছে... একটু অপেক্ষা করুন 🚀</div>';
 
     try {
         const response = await fetch(APPS_SCRIPT_URL);
         const data = await response.json();
         const validVideos = Array.isArray(data) ? data.filter(v => v && v.driveId && v.driveId.trim() !== "") : [];
+        
+        // ক্যাশ মেমোরিতে সেভ করে রাখা ভবিষ্যতের ফাস্ট লোডিংয়ের জন্য
+        sessionStorage.setItem(CACHE_KEY, JSON.stringify(validVideos));
+        
         renderVideos(validVideos);
     } catch (error) {
         console.error("Error fetching videos:", error);
-        container.innerHTML = '<div class="status-msg" style="color: #ff3366; text-align: center; padding: 20px;">ভিডিও লোড করতে সমস্যা হয়েছে। অনুগ্রহ করে পেজ রিফ্রেশ করুন।</div>';
+        container.innerHTML = '<div class="status-msg" style="color: #ff3366; text-align: center; padding: 30px;">ভিডিও লোড করতে সমস্যা হয়েছে। অনুগ্রহ করে পেজ রিফ্রেশ করুন।</div>';
+    }
+}
+
+// ব্যাকগ্রাউন্ড ফেচ (ইউজারের বিরতি ছাড়াই নতুন ভিডিও আপডেট করার জন্য)
+async function fetchVideosBackground() {
+    try {
+        const response = await fetch(APPS_SCRIPT_URL);
+        const data = await response.json();
+        const validVideos = Array.isArray(data) ? data.filter(v => v && v.driveId && v.driveId.trim() !== "") : [];
+        sessionStorage.setItem(CACHE_KEY, JSON.stringify(validVideos));
+    } catch (e) {
+        console.error("Background sync error", e);
     }
 }
 
@@ -70,12 +104,12 @@ function renderVideos(videos) {
     container.innerHTML = "";
 
     if (!videos || videos.length === 0) {
-        container.innerHTML = '<div class="status-msg" style="color: #fff; text-align: center; padding: 20px;">কোনো ভিডিও পাওয়া যায়নি। ফোল্ডারে ভিডিও আপলোড করুন!</div>';
+        container.innerHTML = '<div class="status-msg" style="color: #fff; text-align: center; padding: 30px;">কোনো ভিডিও পাওয়া যায়নি। ফোল্ডারে ভিডিও আপলোড করুন!</div>';
         return;
     }
 
     videos.forEach((video, index) => {
-        // প্রতি ৪টি ভিডিওর পর ভিটমেট স্টাইল নেটিভ অ্যাড কার্ড (স্পন্সরড লেবেল সহ)
+        // প্রতি ৪টি ভিডিওর পর ভিটমেট স্টাইল নেটিভ অ্যাড কার্ড
         if (index > 0 && index % 4 === 0) {
             const nativeAdCard = document.createElement("div");
             nativeAdCard.className = "video-card native-ad-card";
@@ -110,7 +144,7 @@ function renderVideos(videos) {
         card.className = "video-card";
         card.innerHTML = `
             <div class="video-player-wrapper" style="position: relative; width: 100%; height: 390px; background: #000; border-radius: 12px; overflow: hidden; cursor: pointer;" onclick="playVideo(this, '${video.driveId}')">
-                <img src="${thumbnailUrl}" alt="Thumbnail" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=640&auto=format&fit=crop'">
+                <img src="${thumbnailUrl}" alt="Thumbnail" loading="lazy" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=640&auto=format&fit=crop'">
                 
                 <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 65px; height: 65px; background: rgba(255, 0, 80, 0.9); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(0,0,0,0.6);">
                     <div style="width: 0; height: 0; border-top: 12px solid transparent; border-bottom: 12px solid transparent; border-left: 22px solid #fff; margin-left: 4px;"></div>
@@ -200,7 +234,7 @@ function setupVideoScrollControl() {
     });
 }
 
-// সার্চ বক্সের পরিবর্তে বাংলা ভাইরাল টেক্সট হেডার আপডেট
+// বাংলা ভাইরাল টেক্সট হেডার আপডেট
 document.addEventListener("DOMContentLoaded", () => {
     const searchInput = document.getElementById("searchInput");
     if (searchInput) {
@@ -208,7 +242,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
-// লাইক টগল ও লোকাল স্টোরেজ আপডেট (ফুল ফাংশনাল রিয়েল-টাইম লাইক কাউন্ট)
+// লাইক টগল ও লোকাল স্টোরেজ আপডেট
 function toggleLike(videoId, btnElement) {
     const hasLiked = localStorage.getItem(LIKE_STORAGE_KEY + videoId);
     const countSpan = btnElement.querySelector(".like-count");
@@ -228,4 +262,4 @@ function toggleLike(videoId, btnElement) {
         btnElement.classList.add("liked");
         countSpan.textContent = formatNumber(newLikes);
     }
-        }
+}
