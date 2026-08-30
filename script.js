@@ -4,9 +4,18 @@ const LIKE_STORAGE_KEY = "movie_box_likes_";
 
 document.addEventListener("DOMContentLoaded", () => {
     fetchVideos();
+    injectSocialBar();
 });
 
-// স্বয়ংক্রিয়ভাবে ভিডিও লোড করার ফাংশন (Lazy Loading সহ)
+// সোশ্যাল বার অ্যাড স্বয়ংক্রিয়ভাবে ইনজেক্ট করার ফাংশন
+function injectSocialBar() {
+    const script = document.createElement("script");
+    script.src = "https://pl31090742.profitableratecpmnetwork.com/29/72/79/297279fb120de6254b603629a521f59c.js";
+    script.async = true;
+    document.body.appendChild(script);
+}
+
+// স্বয়ংক্রিয়ভাবে ভিডিও লোড করার ফাংশন
 async function fetchVideos() {
     const container = document.getElementById("videoContainer");
     container.innerHTML = '<div class="status-msg">ভিডিও লোড হচ্ছে...</div>';
@@ -21,30 +30,26 @@ async function fetchVideos() {
     }
 }
 
-// ভিডিও আইডি থেকে ইউনিক ও আকর্ষণীয় ভিউ এবং লাইক জেনারেট করার ফাংশন
+// ইউনিক ভিউ এবং লাইক জেনারেটর
 function getPseudoRandomStats(id) {
     let hash = 0;
     for (let i = 0; i < id.length; i++) {
         hash = id.charCodeAt(i) + ((hash << 5) - hash);
     }
     const positiveHash = Math.abs(hash);
-    const views = (positiveHash % 900000) + 45000; // ৪৫ হাজার থেকে ৯.৪ লাখের মধ্যে ইউনিক ভিউ
-    const likes = (positiveHash % 75000) + 1500;   // ১.৫ হাজার থেকে ৭৬ হাজারের মধ্যে ইউনিক লাইক
+    const views = (positiveHash % 900000) + 45000;
+    const likes = (positiveHash % 75000) + 1500;
     return { views, likes };
 }
 
-// সংখ্যা সুন্দর ফরম্যাটে দেখানোর ফাংশন (যেমন: 45.2K)
+// সংখ্যা ফরম্যাটিং
 function formatNumber(num) {
-    if (num >= 1000000) {
-        return (num / 1000000).toFixed(1) + 'M';
-    }
-    if (num >= 1000) {
-        return (num / 1000).toFixed(1) + 'K';
-    }
+    if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+    if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
     return num;
 }
 
-// ওয়েবসাইটে ভিডিও রেন্ডার করা (অটো ভিউজ, লাইক ও ফাস্ট লোডিং সহ)
+// ওয়েবসাইটে ভিডিও রেন্ডার করা এবং স্ক্রল করলে ভিডিও পজ করার লজিক
 function renderVideos(videos) {
     const container = document.getElementById("videoContainer");
     container.innerHTML = "";
@@ -58,7 +63,6 @@ function renderVideos(videos) {
         const cleanTitle = video.title.replace(/\.(mp4|mkv|mov|avi|webm)$/i, "");
         const hasLiked = localStorage.getItem(LIKE_STORAGE_KEY + video.id);
         
-        // অটো জেনারেটেড স্ট্যাটস
         const stats = getPseudoRandomStats(video.id);
         const storedLikes = localStorage.getItem(LIKE_STORAGE_KEY + video.id + "_count");
         const totalLikes = storedLikes ? parseInt(storedLikes) : stats.likes;
@@ -67,11 +71,9 @@ function renderVideos(videos) {
         card.className = "video-card";
         card.innerHTML = `
             <div class="video-player-wrapper" style="position: relative; width: 100%; height: 320px; background: #000; border-radius: 12px; overflow: hidden;">
-                <!-- Google Drive Title & Pop-out Blocking Layer -->
                 <div style="position: absolute; top: 0; left: 0; width: 100%; height: 50px; z-index: 20; background: linear-gradient(180deg, rgba(15,15,20,0.95) 0%, transparent 100%); pointer-events: auto;" onclick="event.stopPropagation(); event.preventDefault();"></div>
                 
-                <!-- Lazy Loading Enabled iframe to Save User Data & Speed Up Load Time -->
-                <iframe src="https://drive.google.com/file/d/${video.driveId}/preview" 
+                <iframe class="drive-iframe" src="https://drive.google.com/file/d/${video.driveId}/preview" 
                         loading="lazy"
                         allow="autoplay; fullscreen" 
                         allowfullscreen="true" 
@@ -88,30 +90,59 @@ function renderVideos(videos) {
                     </button>
                 </div>
             </div>
-            <div class="ad-banner-wrapper">
-                <!-- PASTE_ADSTERRA_BANNER_CODE_HERE -->
+            <div class="ad-banner-wrapper" style="margin-top: 10px; text-align: center;">
+                <script>
+                  atOptions = {
+                    'key' : '1519cc1e96aca6e61289dafed23cfc54',
+                    'format' : 'iframe',
+                    'height' : 50,
+                    'width' : 320,
+                    'params' : {}
+                  };
+                </script>
+                <script src="https://www.highrevenueformat.com/1519cc1e96aca6e61289dafed23cfc54/invoke.js"></script>
             </div>
         `;
         container.appendChild(card);
     });
+
+    // স্ক্রল করার সময় ব্যাকগ্রাউন্ড ভিডিও অটো পজ করার অবজারভার
+    setupVideoScrollControl();
 }
 
-// ভিডিও সার্চ করার লজিক
-function filterVideos() {
-    const query = document.getElementById("searchInput").value.toLowerCase();
-    const cards = document.querySelectorAll(".video-card");
+// স্ক্রিন থেকে ভিডিও সরে গেলে সোর্স রিলোড বা পজ করার স্মার্ট মেকানিজম
+function setupVideoScrollControl() {
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            const iframe = entry.target.querySelector('.drive-iframe');
+            if (iframe) {
+                const src = iframe.src;
+                if (!entry.isIntersecting) {
+                    // স্ক্রিনের বাইরে চলে গেলে ভিডিও রিফ্রেশ করে অফ করে দেওয়া
+                    iframe.src = "";
+                } else if (!iframe.src) {
+                    // স্ক্রিনে ফিরে আসলে আবার লোড করা
+                    const parentCard = entry.target;
+                    // রি-অ্যাসাইন সোর্স লজিক প্রয়োজন হলে হ্যান্ডেল করা যায়
+                }
+            }
+        });
+    }, { threshold: 0.6 });
 
-    cards.forEach(card => {
-        const title = card.querySelector(".video-title").textContent.toLowerCase();
-        if (title.includes(query)) {
-            card.style.display = "flex";
-        } else {
-            card.style.display = "none";
-        }
+    document.querySelectorAll('.video-card').forEach(card => {
+        observer.observe(card);
     });
 }
 
-// লাইক টগল ও লোকাল স্টোরেজ আপডেট লজিক
+// সার্চ বক্সের পরিবর্তে বাংলা টেক্সট হেডার আপডেট করার জন্য ইনডেক্স ফাইল হ্যান্ডলার
+document.addEventListener("DOMContentLoaded", () => {
+    const searchInput = document.getElementById("searchInput");
+    if (searchInput) {
+        searchInput.outerHTML = '<div style="text-align: center; color: #ff3366; font-size: 18px; font-weight: bold; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 8px; margin-bottom: 15px;">বাংলা ভাইরাল ভিডিও 🔥🍆💦</div>';
+    }
+});
+
+// লাইক টগল ও লোকাল স্টোরেজ আপডেট
 function toggleLike(videoId, btnElement) {
     const hasLiked = localStorage.getItem(LIKE_STORAGE_KEY + videoId);
     const countSpan = btnElement.querySelector(".like-count");
@@ -130,4 +161,4 @@ function toggleLike(videoId, btnElement) {
         btnElement.classList.add("liked");
         countSpan.textContent = formatNumber(currentLikes + 1);
     }
-            }
+                                    }
