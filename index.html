@@ -3,38 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Movie Box</title>
+    <title>Movie Box - বাংলা ভাইরাল ভিডিও স্ট্রিমিং</title>
     
-    <!-- Open Graph SEO Metadata for Facebook -->
-    <meta property="og:title" content="Movie Box - Watch Videos">
-    <meta property="og:description" content="Watch simple, fast and clean videos on Movie Box.">
-    <meta property="og:type" content="website">
-    <meta property="og:image" content="https://via.placeholder.com/1200x630.png?text=MOVIE+BOX">
-    
-    <link rel="stylesheet" href="style.css">
+    <!-- Google Search Console Verification Tag -->
+    <meta name="google-site-verification" content="ihjoW37gTzmEshVOHUNdxKuq4Yj0Zwq0rp4yZm9QGR4" />
+
+    <style>
+        body {
+            background-color: #121216;
+            color: #fff;
+            font-family: sans-serif;
+            margin: 0;
+            padding: 15px;
+        }
+        .app-container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        .app-header {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: #ff3366;
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+        }
+        .video-card {
+            background: #18181f;
+            border-radius: 15px;
+            padding: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+            border: 1px solid #2a2a35;
+        }
+        .status-msg {
+            text-align: center;
+            padding: 30px;
+            color: #aaa;
+        }
+    </style>
 </head>
 <body>
 
-    <!-- Top Floating Advertisement Placeholder -->
-    <div id="top-floating-ad" class="floating-ad-wrapper">
-        <!-- PASTE_ADSTERRA_FLOATING_AD_CODE_HERE -->
+    <div class="app-container">
+        <div class="app-header">MOVIE BOX</div>
+        
+        <!-- Search Input Placeholder (স্ক্রিপ্ট দিয়ে বাংলায় রিমুভ করা হবে) -->
+        <input type="text" id="searchInput" style="display:none;">
+        
+        <!-- Main Video Container -->
+        <div id="videoContainer"></div>
     </div>
 
-    <!-- Header / Logo -->
-    <header class="header">
-        <h1 class="logo">MOVIE BOX</h1>
-    </header>
-
-    <!-- Search System -->
-    <div class="search-container">
-        <input type="text" id="searchInput" placeholder="Search videos..." onkeyup="filterVideos()">
-    </div>
-
-    <!-- Video Feed Container -->
-    <main id="videoContainer" class="video-container">
-        <div class="status-msg">ভিডিও লোড হচ্ছে...</div>
-    </main>
-
+    <!-- Main JavaScript File -->
     <script src="script.js"></script>
 </body>
-                                    </html>
+</html>
