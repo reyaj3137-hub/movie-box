@@ -49,7 +49,7 @@ function formatNumber(num) {
     return num;
 }
 
-// থাম্বনেইল এবং কাস্টম ভিডিও কন্ট্রোল সহ ভিডিও রেন্ডার করার প্রধান ফাংশন
+// থাম্বনেইল এবং ড্রাইভ লক সিস্টেম সহ ভিডিও রেন্ডার করার ফাংশন
 function renderVideos(videos) {
     const container = document.getElementById("videoContainer");
     container.innerHTML = "";
@@ -60,13 +60,12 @@ function renderVideos(videos) {
     }
 
     videos.forEach((video, index) => {
-        // প্রতি ৪টি ভিডিওর পর ভিটমেট স্টাইল নেটিভ অ্যাড ইনজেক্ট করার লজিক
+        // প্রতি ৪টি ভিডিওর পর ভিটমেট স্টাইল নেটিভ অ্যাড ইনজেক্ট করা
         if (index > 0 && index % 4 === 0) {
             const nativeAdCard = document.createElement("div");
             nativeAdCard.className = "video-card native-ad-card";
             nativeAdCard.style.cssText = "background: #1f1f26; border-radius: 15px; padding: 10px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.4); border: 1px solid #333; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 360px;";
             
-            // আপনার দেওয়া নেটিভ ব্যানার কোড সরাসরি বসানো হচ্ছে
             const adDiv = document.createElement("div");
             adDiv.id = "container-2ac039b86eb14a98f23d5820729446aa";
             nativeAdCard.appendChild(adDiv);
@@ -80,7 +79,6 @@ function renderVideos(videos) {
             container.appendChild(nativeAdCard);
         }
 
-        // ভিডিও কার্ড রেন্ডারিং
         const cleanTitle = video.title.replace(/\.(mp4|mkv|mov|avi|webm)$/i, "");
         const hasLiked = localStorage.getItem(LIKE_STORAGE_KEY + video.id);
         const stats = getPseudoRandomStats(video.id);
@@ -110,7 +108,7 @@ function renderVideos(videos) {
             <div class="ad-banner-wrapper" style="margin-top: 12px; text-align: center; min-height: 50px;"></div>
         `;
 
-        // প্রতিটি ভিডিওর নিচে প্রফেশনাল ব্যানার অ্যাড ইনজেকশন
+        // ব্যানার অ্যাড ইনজেকশন
         const adWrapper = card.querySelector('.ad-banner-wrapper');
         const adIframe = document.createElement('iframe');
         adIframe.style.cssText = 'width: 320px; height: 50px; border: none; overflow: hidden; background: transparent;';
@@ -121,40 +119,26 @@ function renderVideos(videos) {
         container.appendChild(card);
     });
 
-    // স্ক্রল কন্ট্রোল সেটআপ
     setupVideoScrollControl();
 }
 
-// কাস্টম ভিডিও কন্ট্রোল সহ প্লে ফাংশন (গুগল ড্রাইভের ডিফল্ট কন্ট্রোল হাইড করা হয়েছে)
+// গুগল ড্রাইভের লোগো ও পপ-আউট বাটন ক্রপ (লক) করে হাইড করার প্রো-মেকানিজম
 window.playVideo = function(wrapperElement, driveId) {
     wrapperElement.innerHTML = `
-        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000;">
+        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; overflow: hidden;">
             <iframe class="drive-iframe" src="https://drive.google.com/file/d/${driveId}/preview?autoplay=1&controls=0&disablekb=1&modestbranding=1" 
                     allow="autoplay; fullscreen" 
                     allowfullscreen="true" 
                     frameborder="0" 
-                    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;">
+                    style="position: absolute; top: -50px; left: -10px; width: calc(100% + 20px); height: calc(100% + 100px); border: none; pointer-events: auto;">
             </iframe>
         </div>
-        <div class="custom-video-controls" style="position: absolute; bottom: 0; left: 0; width: 100%; height: 45px; background: linear-gradient(0deg, rgba(0,0,0,0.8) 0%, transparent 100%); z-index: 25; display: flex; align-items: center; justify-content: space-between; padding: 0 15px; pointer-events: auto;" onclick="event.stopPropagation();">
-            <button class="custom-play-pause-btn" style="background: none; border: none; color: #fff; font-size: 20px; cursor: pointer;" onclick="toggleInternalPlayPause(this)">⏸️</button>
-            <div class="custom-time-display" style="color: #ddd; font-size: 12px; font-family: sans-serif; margin-left: auto; margin-right: 15px;">Live</div>
-            <button class="custom-fullscreen-btn" style="background: none; border: none; color: #fff; font-size: 20px; cursor: pointer;" onclick="toggleInternalFullscreen(this.closest('.video-player-wrapper'))">⛶</button>
+        <div class="custom-video-controls" style="position: absolute; bottom: 0; left: 0; width: 100%; height: 45px; background: linear-gradient(0deg, rgba(0,0,0,0.95) 0%, transparent 100%); z-index: 25; display: flex; align-items: center; justify-content: space-between; padding: 0 15px; pointer-events: auto;" onclick="event.stopPropagation();">
+            <span style="color: #ff3366; font-size: 13px; font-weight: bold;">▶ Playing Stream</span>
+            <button class="custom-fullscreen-btn" style="background: none; border: none; color: #fff; font-size: 18px; cursor: pointer;" onclick="toggleInternalFullscreen(this.closest('.video-player-wrapper'))">⛶ Fullscreen</button>
         </div>
     `;
-    wrapperElement.onclick = null; // প্লে করার পর ক্লিক ইভেন্ট ডিজেবল করা
-};
-
-// কাস্টম কন্ট্রোলের জন্য ইন্টারনাল ফাংশন
-window.toggleInternalPlayPause = function(btn) {
-    const iframe = btn.closest('.video-player-wrapper').querySelector('.drive-iframe');
-    if (iframe.paused) {
-        iframe.play();
-        btn.innerHTML = '⏸️';
-    } else {
-        iframe.pause();
-        btn.innerHTML = '▶️';
-    }
+    wrapperElement.onclick = null;
 };
 
 window.toggleInternalFullscreen = function(wrapper) {
@@ -220,4 +204,4 @@ function toggleLike(videoId, btnElement) {
         btnElement.classList.add("liked");
         countSpan.textContent = formatNumber(currentLikes + 1);
     }
-        }
+            }
