@@ -49,7 +49,7 @@ function formatNumber(num) {
     return num;
 }
 
-// থাম্বনেইল সহ ভিডিও রেন্ডার করা (ব্ল্যাক স্ক্রিন সমস্যার চূড়ান্ত সমাধান)
+// থাম্বনেইল সহ ভিডিও এবং ব্যানার অ্যাড রেন্ডার করা
 function renderVideos(videos) {
     const container = document.getElementById("videoContainer");
     container.innerHTML = "";
@@ -67,17 +67,14 @@ function renderVideos(videos) {
         const storedLikes = localStorage.getItem(LIKE_STORAGE_KEY + video.id + "_count");
         const totalLikes = storedLikes ? parseInt(storedLikes) : stats.likes;
 
-        // গুগল ড্রাইভের রিয়েল থাম্বনেইল লিংক
         const thumbnailUrl = `https://drive.google.com/thumbnail?id=${video.driveId}&sz=w1000`;
 
         const card = document.createElement("div");
         card.className = "video-card";
         card.innerHTML = `
             <div class="video-player-wrapper" style="position: relative; width: 100%; height: 320px; background: #111; border-radius: 12px; overflow: hidden; cursor: pointer;" onclick="playVideo(this, '${video.driveId}')">
-                <!-- Video Thumbnail Image -->
                 <img src="${thumbnailUrl}" alt="Thumbnail" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=640&auto=format&fit=crop'">
                 
-                <!-- Play Button Overlay -->
                 <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 65px; height: 65px; background: rgba(255, 0, 80, 0.9); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(0,0,0,0.6);">
                     <div style="width: 0; height: 0; border-top: 12px solid transparent; border-bottom: 12px solid transparent; border-left: 22px solid #fff; margin-left: 4px;"></div>
                 </div>
@@ -91,26 +88,26 @@ function renderVideos(videos) {
                     </button>
                 </div>
             </div>
-            <div class="ad-banner-wrapper" style="margin-top: 10px; text-align: center;"></div>
+            <div class="ad-banner-wrapper" style="margin-top: 12px; text-align: center; min-height: 50px;"></div>
         `;
 
-        // ব্যানার অ্যাড প্রফেশনালি ইনজেক্ট করা
+        // ব্যানার অ্যাড নিরাপদভাবে আইফ্রেমে লোড করার লজিক (শ শতভাগ কার্যকরী)
         const adWrapper = card.querySelector('.ad-banner-wrapper');
-        const s1 = document.createElement('script');
-        s1.innerHTML = `atOptions = { 'key' : '1519cc1e96aca6e61289dafed23cfc54', 'format' : 'iframe', 'height' : 50, 'width' : 320, 'params' : {} };`;
+        const adIframe = document.createElement('iframe');
+        adIframe.style.width = '320px';
+        adIframe.style.height = '50px';
+        adIframe.style.border = 'none';
+        adIframe.style.overflow = 'hidden';
+        adIframe.style.background = 'transparent';
+        adIframe.scrolling = 'no';
+        adIframe.srcdoc = `<html><body style="margin:0;padding:0;background:transparent;text-align:center;"><script>atOptions = {'key' : '1519cc1e96aca6e61289dafed23cfc54', 'format' : 'iframe', 'height' : 50, 'width' : 320, 'params' : {}};<\/script><script src="https://www.highrevenueformat.com/1519cc1e96aca6e61289dafed23cfc54/invoke.js"><\/script></body></html>`;
         
-        const s2 = document.createElement('script');
-        s2.src = "https://www.highrevenueformat.com/1519cc1e96aca6e61289dafed23cfc54/invoke.js";
-        s2.async = true;
-
-        adWrapper.appendChild(s1);
-        adWrapper.appendChild(s2);
-
+        adWrapper.appendChild(adIframe);
         container.appendChild(card);
     });
 }
 
-// থাম্বনেইলে ক্লিক করলে ভিডিও ইনস্ট্যান্ট প্লে হওয়ার লজিক
+// থাম্বনেইলে ক্লিক করলে ভিডিও প্লে হওয়ার লজিক
 window.playVideo = function(wrapperElement, driveId) {
     wrapperElement.innerHTML = `
         <div style="position: absolute; top: 0; left: 0; width: 100%; height: 50px; z-index: 20; background: linear-gradient(180deg, rgba(15,15,20,0.95) 0%, transparent 100%); pointer-events: auto;" onclick="event.stopPropagation(); event.preventDefault();"></div>
