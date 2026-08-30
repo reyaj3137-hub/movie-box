@@ -15,18 +15,22 @@ function injectSocialBar() {
     document.body.appendChild(script);
 }
 
-// স্বয়ংক্রিয়ভাবে ভিডিও লোড করার ফাংশন
+// স্বয়ংক্রিয়ভাবে ভিডিও লোড করার ফাংশন (খালি বক্স রোধ করতে ফিল্টারিং সহ)
 async function fetchVideos() {
     const container = document.getElementById("videoContainer");
-    container.innerHTML = '<div class="status-msg">ভিডিও লোড হচ্ছে...</div>';
+    container.innerHTML = '<div class="status-msg" style="color: #fff; text-align: center; padding: 20px;">ভিডিও লোড হচ্ছে...</div>';
 
     try {
         const response = await fetch(APPS_SCRIPT_URL);
-        const videos = await response.json();
-        renderVideos(videos);
+        const data = await response.json();
+        
+        // শুধু ভ্যালিড এবং ড্রাইভ আইডিযুক্ত ভিডিও ফিল্টার করা যাতে কোনো খালি বক্স না থাকে
+        const validVideos = Array.isArray(data) ? data.filter(v => v && v.driveId && v.driveId.trim() !== "") : [];
+        
+        renderVideos(validVideos);
     } catch (error) {
         console.error("Error fetching videos:", error);
-        container.innerHTML = '<div class="status-msg">ভিডিও লোড করতে সমস্যা হয়েছে। অনুগ্রহ করে পেজ রিফ্রেশ করুন।</div>';
+        container.innerHTML = '<div class="status-msg" style="color: #ff3366; text-align: center; padding: 20px;">ভিডিও লোড করতে সমস্যা হয়েছে। অনুগ্রহ করে পেজ রিফ্রেশ করুন।</div>';
     }
 }
 
@@ -49,13 +53,13 @@ function formatNumber(num) {
     return num;
 }
 
-// থাম্বনেইল এবং রেস্পন্সিভ ভিডিও রেন্ডার করার ফাংশন
+// থাম্বনেইল এবং রেস্পন্সিভ ভিডিও রেন্ডার করার প্রধান ফাংশন
 function renderVideos(videos) {
     const container = document.getElementById("videoContainer");
     container.innerHTML = "";
 
     if (!videos || videos.length === 0) {
-        container.innerHTML = '<div class="status-msg">কোনো ভিডিও পাওয়া যায়নি। ফোল্ডারে ভিডিও আপলোড করুন!</div>';
+        container.innerHTML = '<div class="status-msg" style="color: #fff; text-align: center; padding: 20px;">কোনো ভিডিও পাওয়া যায়নি। ফোল্ডারে ভিডিও আপলোড করুন!</div>';
         return;
     }
 
@@ -79,7 +83,7 @@ function renderVideos(videos) {
             container.appendChild(nativeAdCard);
         }
 
-        const cleanTitle = video.title.replace(/\.(mp4|mkv|mov|avi|webm)$/i, "");
+        const cleanTitle = video.title ? video.title.replace(/\.(mp4|mkv|mov|avi|webm)$/i, "") : "Untitled Video";
         const hasLiked = localStorage.getItem(LIKE_STORAGE_KEY + video.id);
         const stats = getPseudoRandomStats(video.id);
         const storedLikes = localStorage.getItem(LIKE_STORAGE_KEY + video.id + "_count");
@@ -96,11 +100,11 @@ function renderVideos(videos) {
                     <div style="width: 0; height: 0; border-top: 12px solid transparent; border-bottom: 12px solid transparent; border-left: 22px solid #fff; margin-left: 4px;"></div>
                 </div>
             </div>
-            <div class="video-info">
-                <div class="video-title">${cleanTitle}</div>
+            <div class="video-info" style="padding: 10px 0;">
+                <div class="video-title" style="color: #fff; font-size: 15px; font-weight: 500; word-break: break-word;">${cleanTitle}</div>
                 <div class="video-meta-row" style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
                     <span class="view-count" style="color: #aaa; font-size: 13px;">👁️ ${formatNumber(stats.views)} Views</span>
-                    <button class="like-btn ${hasLiked ? 'liked' : ''}" onclick="event.stopPropagation(); toggleLike('${video.id}', this)">
+                    <button class="like-btn ${hasLiked ? 'liked' : ''}" onclick="event.stopPropagation(); toggleLike('${video.id}', this)" style="background: #2a2a35; border: none; color: #fff; padding: 6px 12px; border-radius: 20px; cursor: pointer; font-size: 13px;">
                         ❤️ <span class="like-count">${formatNumber(totalLikes)}</span> Like
                     </button>
                 </div>
@@ -122,12 +126,12 @@ function renderVideos(videos) {
     setupVideoScrollControl();
 }
 
-// গুগল ড্রাইভের পপ-আউট বাটন এবং ওভারল্যাপ চিরতরে ব্লক করার পারফেক্ট ফাংশন
+// গুগল ড্রাইভের পপ-আউট বাটন চিরতরে ব্লক করার ফুলপ্রুফ ফাংশন
 window.playVideo = function(wrapperElement, driveId) {
     wrapperElement.innerHTML = `
-        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: flex; align-items: center; justify-content: center; overflow: hidden;">
-            <!-- ড্রাইভের পপ-আউট বাটন ব্লক করার জন্য সিকিউরিটি শিল্ড -->
-            <div style="position: absolute; top: 0; right: 0; width: 90px; height: 90px; z-index: 50; background: transparent; pointer-events: auto;" onclick="event.stopPropagation();"></div>
+        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative;">
+            <!-- ড্রাইভের পপ-আউট বাটন ব্লক করার জন্য শক্তিশালী সিকিউরিটি শিল্ড -->
+            <div style="position: absolute; top: 0; right: 0; width: 120px; height: 120px; z-index: 99999; background: transparent; pointer-events: auto;" onclick="event.stopPropagation(); event.preventDefault();"></div>
             
             <iframe class="drive-iframe" src="https://drive.google.com/file/d/${driveId}/preview?autoplay=1" 
                     allow="autoplay; fullscreen" 
