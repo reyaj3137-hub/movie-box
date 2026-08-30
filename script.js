@@ -49,7 +49,7 @@ function formatNumber(num) {
     return num;
 }
 
-// থাম্বনেইল এবং ড্রাইভ লক সিস্টেম সহ ভিডিও রেন্ডার করার ফাংশন
+// থাম্বনেইল এবং রেস্পন্সিভ ভিডিও রেন্ডার করার ফাংশন
 function renderVideos(videos) {
     const container = document.getElementById("videoContainer");
     container.innerHTML = "";
@@ -64,7 +64,7 @@ function renderVideos(videos) {
         if (index > 0 && index % 4 === 0) {
             const nativeAdCard = document.createElement("div");
             nativeAdCard.className = "video-card native-ad-card";
-            nativeAdCard.style.cssText = "background: #1f1f26; border-radius: 15px; padding: 10px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.4); border: 1px solid #333; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 360px;";
+            nativeAdCard.style.cssText = "background: #1f1f26; border-radius: 15px; padding: 10px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.4); border: 1px solid #333; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 380px;";
             
             const adDiv = document.createElement("div");
             adDiv.id = "container-2ac039b86eb14a98f23d5820729446aa";
@@ -89,7 +89,7 @@ function renderVideos(videos) {
         const card = document.createElement("div");
         card.className = "video-card";
         card.innerHTML = `
-            <div class="video-player-wrapper" style="position: relative; width: 100%; height: 320px; background: #000; border-radius: 12px; overflow: hidden; cursor: pointer;" onclick="playVideo(this, '${video.driveId}')">
+            <div class="video-player-wrapper" style="position: relative; width: 100%; height: 390px; background: #000; border-radius: 12px; overflow: hidden; cursor: pointer;" onclick="playVideo(this, '${video.driveId}')">
                 <img src="${thumbnailUrl}" alt="Thumbnail" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=640&auto=format&fit=crop'">
                 
                 <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 65px; height: 65px; background: rgba(255, 0, 80, 0.9); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(0,0,0,0.6);">
@@ -122,20 +122,23 @@ function renderVideos(videos) {
     setupVideoScrollControl();
 }
 
-// গুগল ড্রাইভের লোগো ও পপ-আউট বাটন ক্রপ (লক) করে হাইড করার প্রো-মেকানিজম
+// গুগল ড্রাইভের পপ-আউট বাটন এবং ওভারল্যাপ চিরতরে ব্লক করার পারফেক্ট ফাংশন
 window.playVideo = function(wrapperElement, driveId) {
     wrapperElement.innerHTML = `
-        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; overflow: hidden;">
-            <iframe class="drive-iframe" src="https://drive.google.com/file/d/${driveId}/preview?autoplay=1&controls=0&disablekb=1&modestbranding=1" 
+        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+            <!-- ড্রাইভের পপ-আউট বাটন ব্লক করার জন্য সিকিউরিটি শিল্ড -->
+            <div style="position: absolute; top: 0; right: 0; width: 90px; height: 90px; z-index: 50; background: transparent; pointer-events: auto;" onclick="event.stopPropagation();"></div>
+            
+            <iframe class="drive-iframe" src="https://drive.google.com/file/d/${driveId}/preview?autoplay=1" 
                     allow="autoplay; fullscreen" 
                     allowfullscreen="true" 
                     frameborder="0" 
-                    style="position: absolute; top: -50px; left: -10px; width: calc(100% + 20px); height: calc(100% + 100px); border: none; pointer-events: auto;">
+                    style="width: 100%; height: 100%; border: none;">
             </iframe>
         </div>
-        <div class="custom-video-controls" style="position: absolute; bottom: 0; left: 0; width: 100%; height: 45px; background: linear-gradient(0deg, rgba(0,0,0,0.95) 0%, transparent 100%); z-index: 25; display: flex; align-items: center; justify-content: space-between; padding: 0 15px; pointer-events: auto;" onclick="event.stopPropagation();">
+        <div class="custom-video-controls" style="position: absolute; bottom: 0; left: 0; width: 100%; height: 45px; background: linear-gradient(0deg, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.6) 60%, transparent 100%); z-index: 40; display: flex; align-items: center; justify-content: space-between; padding: 0 15px; pointer-events: auto;" onclick="event.stopPropagation();">
             <span style="color: #ff3366; font-size: 13px; font-weight: bold;">▶ Playing Stream</span>
-            <button class="custom-fullscreen-btn" style="background: none; border: none; color: #fff; font-size: 18px; cursor: pointer;" onclick="toggleInternalFullscreen(this.closest('.video-player-wrapper'))">⛶ Fullscreen</button>
+            <button class="custom-fullscreen-btn" style="background: rgba(255,255,255,0.12); border: none; color: #fff; font-size: 12px; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-weight: bold;" onclick="toggleInternalFullscreen(this.closest('.video-player-wrapper'))">⛶ Fullscreen</button>
         </div>
     `;
     wrapperElement.onclick = null;
