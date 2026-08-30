@@ -3,9 +3,23 @@ const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzFE7Hvuw5tUuit
 const LIKE_STORAGE_KEY = "movie_box_likes_";
 
 document.addEventListener("DOMContentLoaded", () => {
+    injectGlobalStyles();
     fetchVideos();
     injectSocialBar();
 });
+
+// স্টাইল ইনজেকশন (লাইক বাটন ও অন্যান্য ডিজাইন স্মুথ রাখার জন্য)
+function injectGlobalStyles() {
+    const styleTag = document.createElement('style');
+    styleTag.innerHTML = `
+        .like-btn.liked {
+            background: #ff3366 !important;
+            color: #fff !important;
+            border-color: #ff3366 !important;
+        }
+    `;
+    document.head.appendChild(styleTag);
+}
 
 // সোশ্যাল বার অ্যাড ইনজেকশন
 function injectSocialBar() {
@@ -15,7 +29,7 @@ function injectSocialBar() {
     document.body.appendChild(script);
 }
 
-// স্বয়ংক্রিয়ভাবে ভিডিও লোড করার ফাংশন (খালি বক্স রোধ করতে ফিল্টারিং সহ)
+// স্বয়ংক্রিয়ভাবে ভিডিও লোড করার ফাংশন (খালি বক্স ফিল্টার সহ)
 async function fetchVideos() {
     const container = document.getElementById("videoContainer");
     container.innerHTML = '<div class="status-msg" style="color: #fff; text-align: center; padding: 20px;">ভিডিও লোড হচ্ছে...</div>';
@@ -23,10 +37,7 @@ async function fetchVideos() {
     try {
         const response = await fetch(APPS_SCRIPT_URL);
         const data = await response.json();
-        
-        // শুধু ভ্যালিড এবং ড্রাইভ আইডিযুক্ত ভিডিও ফিল্টার করা যাতে কোনো খালি বক্স না থাকে
         const validVideos = Array.isArray(data) ? data.filter(v => v && v.driveId && v.driveId.trim() !== "") : [];
-        
         renderVideos(validVideos);
     } catch (error) {
         console.error("Error fetching videos:", error);
@@ -53,7 +64,7 @@ function formatNumber(num) {
     return num;
 }
 
-// থাম্বনেইল এবং রেস্পন্সিভ ভিডিও রেন্ডার করার প্রধান ফাংশন
+// থাম্বনেইল এবং ভিডিও রেন্ডার করার প্রধান ফাংশন
 function renderVideos(videos) {
     const container = document.getElementById("videoContainer");
     container.innerHTML = "";
@@ -64,12 +75,17 @@ function renderVideos(videos) {
     }
 
     videos.forEach((video, index) => {
-        // প্রতি ৪টি ভিডিওর পর ভিটমেট স্টাইল নেটিভ অ্যাড ইনজেক্ট করা
+        // প্রতি ৪টি ভিডিওর পর ভিটমেট স্টাইল নেটিভ অ্যাড কার্ড (স্পন্সরড লেবেল সহ)
         if (index > 0 && index % 4 === 0) {
             const nativeAdCard = document.createElement("div");
             nativeAdCard.className = "video-card native-ad-card";
-            nativeAdCard.style.cssText = "background: #1f1f26; border-radius: 15px; padding: 10px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.4); border: 1px solid #333; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 380px;";
+            nativeAdCard.style.cssText = "background: #18181f; border-radius: 15px; padding: 12px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.4); border: 1px solid #2a2a35; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 280px; position: relative;";
             
+            const adLabel = document.createElement("div");
+            adLabel.innerHTML = "📢 Sponsored Content / Advertisement";
+            adLabel.style.cssText = "color: #777; font-size: 11px; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px;";
+            nativeAdCard.appendChild(adLabel);
+
             const adDiv = document.createElement("div");
             adDiv.id = "container-2ac039b86eb14a98f23d5820729446aa";
             nativeAdCard.appendChild(adDiv);
@@ -104,7 +120,7 @@ function renderVideos(videos) {
                 <div class="video-title" style="color: #fff; font-size: 15px; font-weight: 500; word-break: break-word;">${cleanTitle}</div>
                 <div class="video-meta-row" style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
                     <span class="view-count" style="color: #aaa; font-size: 13px;">👁️ ${formatNumber(stats.views)} Views</span>
-                    <button class="like-btn ${hasLiked ? 'liked' : ''}" onclick="event.stopPropagation(); toggleLike('${video.id}', this)" style="background: #2a2a35; border: none; color: #fff; padding: 6px 12px; border-radius: 20px; cursor: pointer; font-size: 13px;">
+                    <button class="like-btn ${hasLiked ? 'liked' : ''}" onclick="event.stopPropagation(); toggleLike('${video.id}', this)" style="background: #2a2a35; border: 1px solid #3a3a45; color: #fff; padding: 6px 14px; border-radius: 20px; cursor: pointer; font-size: 13px; transition: 0.2s;">
                         ❤️ <span class="like-count">${formatNumber(totalLikes)}</span> Like
                     </button>
                 </div>
@@ -126,11 +142,10 @@ function renderVideos(videos) {
     setupVideoScrollControl();
 }
 
-// গুগল ড্রাইভের পপ-আউট বাটন চিরতরে ব্লক করার ফুলপ্রুফ ফাংশন
+// গুগল ড্রাইভের পপ-আউট বাটন ব্লক করার ফাংশন
 window.playVideo = function(wrapperElement, driveId) {
     wrapperElement.innerHTML = `
         <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative;">
-            <!-- ড্রাইভের পপ-আউট বাটন ব্লক করার জন্য শক্তিশালী সিকিউরিটি শিল্ড -->
             <div style="position: absolute; top: 0; right: 0; width: 120px; height: 120px; z-index: 99999; background: transparent; pointer-events: auto;" onclick="event.stopPropagation(); event.preventDefault();"></div>
             
             <iframe class="drive-iframe" src="https://drive.google.com/file/d/${driveId}/preview?autoplay=1" 
@@ -193,7 +208,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
-// লাইক টগল ও লোকাল স্টোরেজ আপডেট
+// লাইক টগল ও লোকাল স্টোরেজ আপডেট (ফুল ফাংশনাল রিয়েল-টাইম লাইক কাউন্ট)
 function toggleLike(videoId, btnElement) {
     const hasLiked = localStorage.getItem(LIKE_STORAGE_KEY + videoId);
     const countSpan = btnElement.querySelector(".like-count");
@@ -202,13 +217,15 @@ function toggleLike(videoId, btnElement) {
 
     if (hasLiked) {
         localStorage.removeItem(LIKE_STORAGE_KEY + videoId);
-        localStorage.setItem(LIKE_STORAGE_KEY + videoId + "_count", currentLikes - 1);
+        let newLikes = currentLikes - 1;
+        localStorage.setItem(LIKE_STORAGE_KEY + videoId + "_count", newLikes);
         btnElement.classList.remove("liked");
-        countSpan.textContent = formatNumber(currentLikes - 1);
+        countSpan.textContent = formatNumber(newLikes);
     } else {
         localStorage.setItem(LIKE_STORAGE_KEY + videoId, "true");
-        localStorage.setItem(LIKE_STORAGE_KEY + videoId + "_count", currentLikes + 1);
+        let newLikes = currentLikes + 1;
+        localStorage.setItem(LIKE_STORAGE_KEY + videoId + "_count", newLikes);
         btnElement.classList.add("liked");
-        countSpan.textContent = formatNumber(currentLikes + 1);
+        countSpan.textContent = formatNumber(newLikes);
     }
-            }
+        }
