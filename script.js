@@ -49,7 +49,7 @@ function formatNumber(num) {
     return num;
 }
 
-// থাম্বনেইল সহ ভিডিও এবং ব্যানার অ্যাড রেন্ডার করা
+// থাম্বনেইল এবং কাস্টম ভিডিও কন্ট্রোল সহ ভিডিও রেন্ডার করার প্রধান ফাংশন
 function renderVideos(videos) {
     const container = document.getElementById("videoContainer");
     container.innerHTML = "";
@@ -59,20 +59,39 @@ function renderVideos(videos) {
         return;
     }
 
-    videos.forEach(video => {
+    videos.forEach((video, index) => {
+        // প্রতি ৪টি ভিডিওর পর ভিটমেট স্টাইল নেটিভ অ্যাড ইনজেক্ট করার লজিক
+        if (index > 0 && index % 4 === 0) {
+            const nativeAdCard = document.createElement("div");
+            nativeAdCard.className = "video-card native-ad-card";
+            nativeAdCard.style.cssText = "background: #1f1f26; border-radius: 15px; padding: 10px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.4); border: 1px solid #333; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 360px;";
+            
+            // আপনার দেওয়া নেটিভ ব্যানার কোড সরাসরি বসানো হচ্ছে
+            const adDiv = document.createElement("div");
+            adDiv.id = "container-2ac039b86eb14a98f23d5820729446aa";
+            nativeAdCard.appendChild(adDiv);
+            
+            const scriptTag = document.createElement("script");
+            scriptTag.async = true;
+            scriptTag.dataset.cfasync = "false";
+            scriptTag.src = "https://pl31094026.profitableratecpmnetwork.com/2ac039b86eb14a98f23d5820729446aa/invoke.js";
+            nativeAdCard.appendChild(scriptTag);
+
+            container.appendChild(nativeAdCard);
+        }
+
+        // ভিডিও কার্ড রেন্ডারিং
         const cleanTitle = video.title.replace(/\.(mp4|mkv|mov|avi|webm)$/i, "");
         const hasLiked = localStorage.getItem(LIKE_STORAGE_KEY + video.id);
-        
         const stats = getPseudoRandomStats(video.id);
         const storedLikes = localStorage.getItem(LIKE_STORAGE_KEY + video.id + "_count");
         const totalLikes = storedLikes ? parseInt(storedLikes) : stats.likes;
-
         const thumbnailUrl = `https://drive.google.com/thumbnail?id=${video.driveId}&sz=w1000`;
 
         const card = document.createElement("div");
         card.className = "video-card";
         card.innerHTML = `
-            <div class="video-player-wrapper" style="position: relative; width: 100%; height: 320px; background: #111; border-radius: 12px; overflow: hidden; cursor: pointer;" onclick="playVideo(this, '${video.driveId}')">
+            <div class="video-player-wrapper" style="position: relative; width: 100%; height: 320px; background: #000; border-radius: 12px; overflow: hidden; cursor: pointer;" onclick="playVideo(this, '${video.driveId}')">
                 <img src="${thumbnailUrl}" alt="Thumbnail" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=640&auto=format&fit=crop'">
                 
                 <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 65px; height: 65px; background: rgba(255, 0, 80, 0.9); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(0,0,0,0.6);">
@@ -91,34 +110,89 @@ function renderVideos(videos) {
             <div class="ad-banner-wrapper" style="margin-top: 12px; text-align: center; min-height: 50px;"></div>
         `;
 
-        // ব্যানার অ্যাড নিরাপদভাবে আইফ্রেমে লোড করার লজিক (শ শতভাগ কার্যকরী)
+        // প্রতিটি ভিডিওর নিচে প্রফেশনাল ব্যানার অ্যাড ইনজেকশন
         const adWrapper = card.querySelector('.ad-banner-wrapper');
         const adIframe = document.createElement('iframe');
-        adIframe.style.width = '320px';
-        adIframe.style.height = '50px';
-        adIframe.style.border = 'none';
-        adIframe.style.overflow = 'hidden';
-        adIframe.style.background = 'transparent';
+        adIframe.style.cssText = 'width: 320px; height: 50px; border: none; overflow: hidden; background: transparent;';
         adIframe.scrolling = 'no';
         adIframe.srcdoc = `<html><body style="margin:0;padding:0;background:transparent;text-align:center;"><script>atOptions = {'key' : '1519cc1e96aca6e61289dafed23cfc54', 'format' : 'iframe', 'height' : 50, 'width' : 320, 'params' : {}};<\/script><script src="https://www.highrevenueformat.com/1519cc1e96aca6e61289dafed23cfc54/invoke.js"><\/script></body></html>`;
-        
         adWrapper.appendChild(adIframe);
+
         container.appendChild(card);
     });
+
+    // স্ক্রল কন্ট্রোল সেটআপ
+    setupVideoScrollControl();
 }
 
-// থাম্বনেইলে ক্লিক করলে ভিডিও প্লে হওয়ার লজিক
+// কাস্টম ভিডিও কন্ট্রোল সহ প্লে ফাংশন (গুগল ড্রাইভের ডিফল্ট কন্ট্রোল হাইড করা হয়েছে)
 window.playVideo = function(wrapperElement, driveId) {
     wrapperElement.innerHTML = `
-        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 50px; z-index: 20; background: linear-gradient(180deg, rgba(15,15,20,0.95) 0%, transparent 100%); pointer-events: auto;" onclick="event.stopPropagation(); event.preventDefault();"></div>
-        <iframe src="https://drive.google.com/file/d/${driveId}/preview?autoplay=1" 
-                allow="autoplay; fullscreen" 
-                allowfullscreen="true" 
-                frameborder="0" 
-                style="position: absolute; top: -50px; left: 0; width: 100%; height: calc(100% + 50px); border: none;">
-        </iframe>
+        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000;">
+            <iframe class="drive-iframe" src="https://drive.google.com/file/d/${driveId}/preview?autoplay=1&controls=0&disablekb=1&modestbranding=1" 
+                    allow="autoplay; fullscreen" 
+                    allowfullscreen="true" 
+                    frameborder="0" 
+                    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;">
+            </iframe>
+        </div>
+        <div class="custom-video-controls" style="position: absolute; bottom: 0; left: 0; width: 100%; height: 45px; background: linear-gradient(0deg, rgba(0,0,0,0.8) 0%, transparent 100%); z-index: 25; display: flex; align-items: center; justify-content: space-between; padding: 0 15px; pointer-events: auto;" onclick="event.stopPropagation();">
+            <button class="custom-play-pause-btn" style="background: none; border: none; color: #fff; font-size: 20px; cursor: pointer;" onclick="toggleInternalPlayPause(this)">⏸️</button>
+            <div class="custom-time-display" style="color: #ddd; font-size: 12px; font-family: sans-serif; margin-left: auto; margin-right: 15px;">Live</div>
+            <button class="custom-fullscreen-btn" style="background: none; border: none; color: #fff; font-size: 20px; cursor: pointer;" onclick="toggleInternalFullscreen(this.closest('.video-player-wrapper'))">⛶</button>
+        </div>
     `;
+    wrapperElement.onclick = null; // প্লে করার পর ক্লিক ইভেন্ট ডিজেবল করা
 };
+
+// কাস্টম কন্ট্রোলের জন্য ইন্টারনাল ফাংশন
+window.toggleInternalPlayPause = function(btn) {
+    const iframe = btn.closest('.video-player-wrapper').querySelector('.drive-iframe');
+    if (iframe.paused) {
+        iframe.play();
+        btn.innerHTML = '⏸️';
+    } else {
+        iframe.pause();
+        btn.innerHTML = '▶️';
+    }
+};
+
+window.toggleInternalFullscreen = function(wrapper) {
+    if (wrapper.requestFullscreen) {
+        wrapper.requestFullscreen();
+    } else if (wrapper.webkitRequestFullscreen) {
+        wrapper.webkitRequestFullscreen();
+    } else if (wrapper.mozRequestFullscreen) {
+        wrapper.mozRequestFullscreen();
+    } else if (wrapper.msRequestFullscreen) {
+        wrapper.msRequestFullscreen();
+    }
+};
+
+// স্ক্রিন থেকে ভিডিও সরে গেলে বা ফিরে আসলে অটো পজ/প্লে কন্ট্রোল
+function setupVideoScrollControl() {
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            const iframe = entry.target.querySelector('.drive-iframe');
+            if (iframe) {
+                if (!entry.isIntersecting) {
+                    if (iframe.src) {
+                        iframe.dataset.currentSrc = iframe.src;
+                        iframe.src = "";
+                    }
+                } else {
+                    if (!iframe.src && iframe.dataset.currentSrc) {
+                        iframe.src = iframe.dataset.currentSrc;
+                    }
+                }
+            }
+        });
+    }, { threshold: 0.5 });
+
+    document.querySelectorAll('.video-card').forEach(card => {
+        observer.observe(card);
+    });
+}
 
 // সার্চ বক্সের পরিবর্তে বাংলা ভাইরাল টেক্সট হেডার আপডেট
 document.addEventListener("DOMContentLoaded", () => {
@@ -132,7 +206,6 @@ document.addEventListener("DOMContentLoaded", () => {
 function toggleLike(videoId, btnElement) {
     const hasLiked = localStorage.getItem(LIKE_STORAGE_KEY + videoId);
     const countSpan = btnElement.querySelector(".like-count");
-    
     let stats = getPseudoRandomStats(videoId);
     let currentLikes = parseInt(localStorage.getItem(LIKE_STORAGE_KEY + videoId + "_count")) || stats.likes;
 
@@ -147,4 +220,4 @@ function toggleLike(videoId, btnElement) {
         btnElement.classList.add("liked");
         countSpan.textContent = formatNumber(currentLikes + 1);
     }
-}
+        }
