@@ -2,6 +2,7 @@
 const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzFE7Hvuw5tUuitkReeNH4DIwJqDGEfIxCwpGt2TF45ZV3hQOv1Eb8S_qqm14_NCZzP/exec";
 const LIKE_STORAGE_KEY = "movie_box_likes_";
 const CACHE_KEY = "movie_box_cache_data";
+const SMARTLINK_URL = "https://www.profitableratecpmnetwork.com/giuqsa7di?key=bba0986cd07b4c4fb719d69d65e76a42";
 
 document.addEventListener("DOMContentLoaded", () => {
     injectGlobalStyles();
@@ -18,6 +19,10 @@ function injectGlobalStyles() {
             color: #fff !important;
             border-color: #ff3366 !important;
         }
+        .sponsored-card:hover {
+            transform: translateY(-2px);
+            transition: 0.2s ease;
+        }
     `;
     document.head.appendChild(styleTag);
 }
@@ -30,14 +35,13 @@ function injectSocialBar() {
     document.body.appendChild(script);
 }
 
-// ইনস্ট্যান্ট লোডিং (ক্যাশ মেমোরি থেকে দ্রুত ভিডিও শো করার সিস্টেম)
+// ক্যাশ মেমোরি থেকে দ্রুত ভিডিও লোড করার সিস্টেম (সুপার ফাস্ট)
 function loadVideosInstantly() {
     const cachedData = sessionStorage.getItem(CACHE_KEY);
     if (cachedData) {
         try {
             const videos = JSON.parse(cachedData);
             renderVideos(videos);
-            // ব্যাকগ্রাউন্ডে ডাটা আপডেট করে নেওয়া
             fetchVideosBackground();
             return;
         } catch (e) {
@@ -47,7 +51,7 @@ function loadVideosInstantly() {
     fetchVideos();
 }
 
-// সরাসরি সার্ভার থেকে ভিডিও ফেচ করা
+// সার্ভার থেকে ভিডিও ফেচ করা
 async function fetchVideos() {
     const container = document.getElementById("videoContainer");
     container.innerHTML = '<div class="status-msg" style="color: #fff; text-align: center; padding: 30px; font-size: 15px;">ভিডিও লোড হচ্ছে... একটু অপেক্ষা করুন 🚀</div>';
@@ -57,9 +61,7 @@ async function fetchVideos() {
         const data = await response.json();
         const validVideos = Array.isArray(data) ? data.filter(v => v && v.driveId && v.driveId.trim() !== "") : [];
         
-        // ক্যাশ মেমোরিতে সেভ করে রাখা ভবিষ্যতের ফাস্ট লোডিংয়ের জন্য
         sessionStorage.setItem(CACHE_KEY, JSON.stringify(validVideos));
-        
         renderVideos(validVideos);
     } catch (error) {
         console.error("Error fetching videos:", error);
@@ -67,7 +69,7 @@ async function fetchVideos() {
     }
 }
 
-// ব্যাকগ্রাউন্ড ফেচ (ইউজারের বিরতি ছাড়াই নতুন ভিডিও আপডেট করার জন্য)
+// ব্যাকগ্রাউন্ড সিঙ্ক
 async function fetchVideosBackground() {
     try {
         const response = await fetch(APPS_SCRIPT_URL);
@@ -98,7 +100,7 @@ function formatNumber(num) {
     return num;
 }
 
-// থাম্বনেইল এবং ভিডিও রেন্ডার করার প্রধান ফাংশন
+// ভিডিও এবং স্মার্টলিংক স্পন্সরড কার্ড রেন্ডার করার ফাংশন
 function renderVideos(videos) {
     const container = document.getElementById("videoContainer");
     container.innerHTML = "";
@@ -109,28 +111,30 @@ function renderVideos(videos) {
     }
 
     videos.forEach((video, index) => {
-        // প্রতি ৪টি ভিডিওর পর ভিটমেট স্টাইল নেটিভ অ্যাড কার্ড
+        // প্রতি ৪টি ভিডিওর পর আপনার স্মার্টলিংকযুক্ত আকর্ষণীয় প্রমোশনাল/স্পন্সরড কার্ড ইনজেক্ট করা
         if (index > 0 && index % 4 === 0) {
-            const nativeAdCard = document.createElement("div");
-            nativeAdCard.className = "video-card native-ad-card";
-            nativeAdCard.style.cssText = "background: #18181f; border-radius: 15px; padding: 12px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.4); border: 1px solid #2a2a35; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 280px; position: relative;";
-            
-            const adLabel = document.createElement("div");
-            adLabel.innerHTML = "📢 Sponsored Content / Advertisement";
-            adLabel.style.cssText = "color: #777; font-size: 11px; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px;";
-            nativeAdCard.appendChild(adLabel);
+            const sponsoredCard = document.createElement("div");
+            sponsoredCard.className = "video-card sponsored-card";
+            sponsoredCard.style.cssText = "background: linear-gradient(135deg, #1f1f2e, #141419); border-radius: 15px; padding: 12px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); border: 1px solid #333; cursor: pointer;";
+            sponsoredCard.onclick = () => window.open(SMARTLINK_URL, '_blank');
 
-            const adDiv = document.createElement("div");
-            adDiv.id = "container-2ac039b86eb14a98f23d5820729446aa";
-            nativeAdCard.appendChild(adDiv);
-            
-            const scriptTag = document.createElement("script");
-            scriptTag.async = true;
-            scriptTag.dataset.cfasync = "false";
-            scriptTag.src = "https://pl31094026.profitableratecpmnetwork.com/2ac039b86eb14a98f23d5820729446aa/invoke.js";
-            nativeAdCard.appendChild(scriptTag);
-
-            container.appendChild(nativeAdCard);
+            sponsoredCard.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <span style="color: #ff3366; font-size: 11px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;">🔥 Sponsored Exclusive Stream</span>
+                    <span style="background: rgba(255,51,102,0.2); color: #ff3366; font-size: 10px; padding: 2px 8px; border-radius: 4px; font-weight: bold;">Ad</span>
+                </div>
+                <div style="position: relative; width: 100%; height: 280px; background: #000; border-radius: 10px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                    <div style="position: absolute; inset: 0; background: url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=640&auto=format&fit=crop') center/cover; opacity: 0.5;"></div>
+                    <div style="position: relative; z-index: 2; width: 65px; height: 65px; background: rgba(255, 0, 80, 0.9); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(0,0,0,0.6);">
+                        <div style="width: 0; height: 0; border-top: 12px solid transparent; border-bottom: 12px solid transparent; border-left: 22px solid #fff; margin-left: 4px;"></div>
+                    </div>
+                </div>
+                <div style="margin-top: 12px; display: flex; justify-content: space-between; align-items: center;">
+                    <div style="color: #fff; font-size: 14px; font-weight: 500;">⚡ Viral Special Video HD (Click to Play)</div>
+                    <button style="background: #ff3366; border: none; color: #fff; padding: 7px 15px; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer;">Watch Now</button>
+                </div>
+            `;
+            container.appendChild(sponsoredCard);
         }
 
         const cleanTitle = video.title ? video.title.replace(/\.(mp4|mkv|mov|avi|webm)$/i, "") : "Untitled Video";
@@ -262,4 +266,4 @@ function toggleLike(videoId, btnElement) {
         btnElement.classList.add("liked");
         countSpan.textContent = formatNumber(newLikes);
     }
-}
+                }
