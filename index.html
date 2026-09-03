@@ -1,65 +1,89 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Movie Box - Viral Videos & বাংলা ভাইরাল ভিডিও স্ট্রিমিং</title>
+    <title>Movie Box - Watch & Stream HD Movies</title>
     
-    <!-- SEO Meta Keywords & Description (English & Bengali) -->
-    <meta name="description" content="Watch viral videos, hot trending streams, and বাংলা ভাইরাল ভিডিও online in HD quality. Best video streaming platform.">
-    <meta name="keywords" content="viral videos, hot streams, trending clips, বাংলা ভাইরাল ভিডিও, video streaming">
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-NRJMYDTG9V"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
 
-    <!-- Google Search Console Verification Tag -->
-    <meta name="google-site-verification" content="ihjoW37gTzmEshVOHUNdxKuq4Yj0Zwq0rp4yZm9QGR4" />
+      gtag('config', 'G-NRJMYDTG9V');
+    </script>
+    
+    <meta name="google-site-verification" content="your-verification-tag-here">
 
     <style>
-        body {
-            background-color: #121216;
-            color: #fff;
-            font-family: sans-serif;
+        * {
             margin: 0;
-            padding: 15px;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
         }
-        .app-container {
-            max-width: 500px;
-            margin: 0 auto;
+        body {
+            background-color: #0f1015;
+            color: #ffffff;
+            line-height: 1.6;
         }
-        .app-header {
+        header {
+            background: #1a1c23;
+            padding: 20px;
             text-align: center;
-            font-size: 24px;
-            font-weight: bold;
-            color: #ff3366;
-            margin-bottom: 15px;
+            border-bottom: 2px solid #e50914;
+        }
+        header h1 {
+            color: #e50914;
+            font-size: 28px;
             letter-spacing: 1px;
         }
-        .video-card {
-            background: #18181f;
-            border-radius: 15px;
-            padding: 12px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-            border: 1px solid #2a2a35;
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 15px;
         }
-        .status-msg {
+        .welcome-section {
             text-align: center;
-            padding: 30px;
-            color: #aaa;
+            padding: 40px 20px;
+            background: #161821;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+        .welcome-section h2 {
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+        .welcome-section p {
+            color: #b3b3b3;
+        }
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: #1a1c23;
+            color: #888;
+            margin-top: 50px;
+            font-size: 14px;
         }
     </style>
 </head>
 <body>
 
-    <div class="app-container">
-        <div class="app-header">MOVIE BOX</div>
-        
-        <!-- Search Input Placeholder (স্ক্রিপ্ট দিয়ে বাংলায় রিমুভ করা হবে) -->
-        <input type="text" id="searchInput" style="display:none;">
-        
-        <!-- Main Video Container -->
-        <div id="videoContainer"></div>
+    <header>
+        <h1>Movie Box</h1>
+    </header>
+
+    <div class="container">
+        <div class="welcome-section">
+            <h2>স্বাগতম আপনার মুভি প্ল্যাটফর্মে!</h2>
+            <p>এখানে আপনার পছন্দের সিনেমাগুলো দেখতে পাবেন। এখন থেকে আপনার ওয়েবসাইটের সমস্ত ভিজিটর ট্রাফিক গুগল অ্যানালিটিক্সের মাধ্যমে স্বয়ংক্রিয়ভাবে ট্র্যাক হবে।</p>
+        </div>
     </div>
 
-    <!-- Main JavaScript File -->
-    <script src="script.js"></script>
+    <footer>
+        <p>&copy; 2026 Movie Box. All Rights Reserved.</p>
+    </footer>
+
 </body>
 </html>
