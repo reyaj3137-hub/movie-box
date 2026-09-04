@@ -10,260 +10,1060 @@ document.addEventListener("DOMContentLoaded", () => {
     injectSocialBar();
 });
 
+
+// ============================================
 // গ্লোবাল স্টাইল ইনজেকশন
+// ============================================
+
 function injectGlobalStyles() {
+
     const styleTag = document.createElement('style');
+
     styleTag.innerHTML = `
+
         .like-btn.liked {
             background: #ff3366 !important;
             color: #fff !important;
             border-color: #ff3366 !important;
         }
+
         .sponsored-card:hover {
             transform: translateY(-2px);
             transition: 0.2s ease;
         }
+
+
+        /* =====================================
+           VIDEO SIDE AD SYSTEM
+           ===================================== */
+
+        .movie-card-with-side-ads {
+            position: relative;
+        }
+
+
+        .movie-side-ad {
+            position: absolute;
+
+            width: 50px;
+            height: 320px;
+
+            top: 50%;
+
+            transform: translateY(-50%);
+
+            z-index: 20;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            pointer-events: auto;
+        }
+
+
+        .movie-side-ad-left {
+            left: -58px;
+        }
+
+
+        .movie-side-ad-right {
+            right: -58px;
+        }
+
+
+        .movie-side-ad iframe {
+            width: 50px !important;
+            height: 320px !important;
+
+            border: none !important;
+
+            display: block;
+
+            overflow: hidden;
+
+            background: transparent;
+        }
+
+
+        /*
+         মোবাইলে বিজ্ঞাপন ভিডিওর ওপর
+         উঠবে না।
+         
+         ছোট স্ক্রিনে side ad বন্ধ থাকবে,
+         যাতে ভিডিও দেখতে অসুবিধা না হয়।
+        */
+
+        @media (max-width: 620px) {
+
+            .movie-side-ad {
+                display: none !important;
+            }
+
+        }
+
+
+        /*
+         বড় স্ক্রিনে side ad card-এর
+         দুই পাশে থাকবে।
+        */
+
+        @media (min-width: 621px) {
+
+            .movie-card-with-side-ads {
+                margin-left: 58px;
+                margin-right: 58px;
+            }
+
+        }
+
     `;
+
     document.head.appendChild(styleTag);
 }
 
+
+// ============================================
 // সোশ্যাল বার অ্যাড ইনজেকশন
+// ============================================
+
 function injectSocialBar() {
+
     const script = document.createElement("script");
-    script.src = "https://pl31090742.profitableratecpmnetwork.com/29/72/79/297279fb120de6254b603629a521f59c.js";
+
+    script.src =
+        "https://pl31090742.profitableratecpmnetwork.com/29/72/79/297279fb120de6254b603629a521f59c.js";
+
     script.async = true;
+
     document.body.appendChild(script);
 }
 
-// ক্যাশ মেমোরি থেকে দ্রুত ভিডিও লোড করার সিস্টেম (সুপার ফাস্ট)
+
+// ============================================
+// ক্যাশ মেমোরি থেকে দ্রুত ভিডিও লোড
+// ============================================
+
 function loadVideosInstantly() {
-    const cachedData = sessionStorage.getItem(CACHE_KEY);
+
+    const cachedData =
+        sessionStorage.getItem(CACHE_KEY);
+
     if (cachedData) {
+
         try {
+
             const videos = JSON.parse(cachedData);
+
             renderVideos(videos);
+
             fetchVideosBackground();
+
             return;
+
         } catch (e) {
+
             console.error("Cache read error", e);
+
         }
+
     }
+
     fetchVideos();
 }
 
-// সার্ভার থেকে ভিডিও ফেচ করা
+
+// ============================================
+// সার্ভার থেকে ভিডিও ফেচ
+// ============================================
+
 async function fetchVideos() {
-    const container = document.getElementById("videoContainer");
-    container.innerHTML = '<div class="status-msg" style="color: #fff; text-align: center; padding: 30px; font-size: 15px;">ভিডিও লোড হচ্ছে... একটু অপেক্ষা করুন 🚀</div>';
+
+    const container =
+        document.getElementById("videoContainer");
+
+    container.innerHTML =
+        '<div class="status-msg" style="color: #fff; text-align: center; padding: 30px; font-size: 15px;">ভিডিও লোড হচ্ছে... একটু অপেক্ষা করুন 🚀</div>';
 
     try {
-        const response = await fetch(APPS_SCRIPT_URL);
-        const data = await response.json();
-        const validVideos = Array.isArray(data) ? data.filter(v => v && v.driveId && v.driveId.trim() !== "") : [];
-        
-        sessionStorage.setItem(CACHE_KEY, JSON.stringify(validVideos));
+
+        const response =
+            await fetch(APPS_SCRIPT_URL);
+
+        const data =
+            await response.json();
+
+        const validVideos =
+            Array.isArray(data)
+                ? data.filter(
+                    v =>
+                        v &&
+                        v.driveId &&
+                        v.driveId.trim() !== ""
+                )
+                : [];
+
+        sessionStorage.setItem(
+            CACHE_KEY,
+            JSON.stringify(validVideos)
+        );
+
         renderVideos(validVideos);
+
     } catch (error) {
-        console.error("Error fetching videos:", error);
-        container.innerHTML = '<div class="status-msg" style="color: #ff3366; text-align: center; padding: 30px;">ভিডিও লোড করতে সমস্যা হয়েছে। অনুগ্রহ করে পেজ রিফ্রেশ করুন।</div>';
+
+        console.error(
+            "Error fetching videos:",
+            error
+        );
+
+        container.innerHTML =
+            '<div class="status-msg" style="color: #ff3366; text-align: center; padding: 30px;">ভিডিও লোড করতে সমস্যা হয়েছে। অনুগ্রহ করে পেজ রিফ্রেশ করুন।</div>';
     }
 }
 
+
+// ============================================
 // ব্যাকগ্রাউন্ড সিঙ্ক
+// ============================================
+
 async function fetchVideosBackground() {
+
     try {
-        const response = await fetch(APPS_SCRIPT_URL);
-        const data = await response.json();
-        const validVideos = Array.isArray(data) ? data.filter(v => v && v.driveId && v.driveId.trim() !== "") : [];
-        sessionStorage.setItem(CACHE_KEY, JSON.stringify(validVideos));
+
+        const response =
+            await fetch(APPS_SCRIPT_URL);
+
+        const data =
+            await response.json();
+
+        const validVideos =
+            Array.isArray(data)
+                ? data.filter(
+                    v =>
+                        v &&
+                        v.driveId &&
+                        v.driveId.trim() !== ""
+                )
+                : [];
+
+        sessionStorage.setItem(
+            CACHE_KEY,
+            JSON.stringify(validVideos)
+        );
+
     } catch (e) {
-        console.error("Background sync error", e);
+
+        console.error(
+            "Background sync error",
+            e
+        );
+
     }
 }
 
+
+// ============================================
 // ইউনিক ভিউ এবং লাইক জেনারেটর
+// ============================================
+
 function getPseudoRandomStats(id) {
+
     let hash = 0;
+
     for (let i = 0; i < id.length; i++) {
-        hash = id.charCodeAt(i) + ((hash << 5) - hash);
+
+        hash =
+            id.charCodeAt(i) +
+            ((hash << 5) - hash);
+
     }
-    const positiveHash = Math.abs(hash);
-    const views = (positiveHash % 900000) + 45000;
-    const likes = (positiveHash % 75000) + 1500;
-    return { views, likes };
+
+    const positiveHash =
+        Math.abs(hash);
+
+    const views =
+        (positiveHash % 900000) + 45000;
+
+    const likes =
+        (positiveHash % 75000) + 1500;
+
+    return {
+        views,
+        likes
+    };
 }
 
+
+// ============================================
 // সংখ্যা ফরম্যাটিং
+// ============================================
+
 function formatNumber(num) {
-    if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
-    if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+
+    if (num >= 1000000)
+        return (num / 1000000).toFixed(1) + 'M';
+
+    if (num >= 1000)
+        return (num / 1000).toFixed(1) + 'K';
+
     return num;
 }
 
-// ভিডিও এবং স্মার্টলিংক স্পন্সরড কার্ড রেন্ডার করার ফাংশন
+
+// ============================================
+// SIDE AD তৈরি করার ফাংশন
+// ============================================
+
+function createSideAd(side) {
+
+    const adContainer =
+        document.createElement("div");
+
+    if (side === "left") {
+
+        adContainer.className =
+            "movie-side-ad movie-side-ad-left";
+
+    } else {
+
+        adContainer.className =
+            "movie-side-ad movie-side-ad-right";
+
+    }
+
+
+    /*
+     আলাদা iframe ব্যবহার করা হয়েছে,
+     যাতে Ad network-এর script সরাসরি
+     iframe-এর মধ্যে execute করতে পারে।
+    */
+
+    const iframe =
+        document.createElement("iframe");
+
+    iframe.setAttribute(
+        "scrolling",
+        "no"
+    );
+
+    iframe.setAttribute(
+        "frameborder",
+        "0"
+    );
+
+    iframe.setAttribute(
+        "loading",
+        "lazy"
+    );
+
+
+    iframe.style.width = "50px";
+    iframe.style.height = "320px";
+    iframe.style.border = "none";
+    iframe.style.overflow = "hidden";
+
+
+    /*
+     320x50 Ad-কে iframe-এর ভিতরে
+     90 degree rotate করা হয়েছে।
+    */
+
+    iframe.srcdoc = `
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+
+<style>
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    width: 320px;
+    height: 50px;
+    overflow: hidden;
+    background: transparent;
+}
+
+#adBox {
+    width: 320px;
+    height: 50px;
+    overflow: hidden;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div id="adBox">
+
+<script>
+var atOptions = {
+    'key' : '1519cc1e96aca6e61289dafed23cfc54',
+    'format' : 'iframe',
+    'height' : 50,
+    'width' : 320,
+    'params' : {}
+};
+<\/script>
+
+<script src="https://www.highrevenueformat.com/1519cc1e96aca6e61289dafed23cfc54/invoke.js"><\/script>
+
+</div>
+
+</body>
+</html>
+`;
+
+
+    /*
+     Ad-কে vertical করা।
+    */
+
+    iframe.style.transform =
+        side === "left"
+            ? "rotate(90deg)"
+            : "rotate(-90deg)";
+
+    iframe.style.transformOrigin =
+        "center center";
+
+
+    adContainer.appendChild(iframe);
+
+    return adContainer;
+}
+
+
+// ============================================
+// VIDEO + SPONSORED CARD RENDER
+// ============================================
+
 function renderVideos(videos) {
-    const container = document.getElementById("videoContainer");
+
+    const container =
+        document.getElementById(
+            "videoContainer"
+        );
+
     container.innerHTML = "";
 
+
     if (!videos || videos.length === 0) {
-        container.innerHTML = '<div class="status-msg" style="color: #fff; text-align: center; padding: 30px;">কোনো ভিডিও পাওয়া যায়নি। ফোল্ডারে ভিডিও আপলোড করুন!</div>';
+
+        container.innerHTML =
+            '<div class="status-msg" style="color: #fff; text-align: center; padding: 30px;">কোনো ভিডিও পাওয়া যায়নি। ফোল্ডারে ভিডিও আপলোড করুন!</div>';
+
         return;
     }
 
+
     videos.forEach((video, index) => {
-        // প্রতি ৪টি ভিডিওর পর আপনার স্মার্টলিংকযুক্ত আকর্ষণীয় প্রমোশনাল/স্পন্সরড কার্ড ইনজেক্ট করা
-        if (index > 0 && index % 4 === 0) {
-            const sponsoredCard = document.createElement("div");
-            sponsoredCard.className = "video-card sponsored-card";
-            sponsoredCard.style.cssText = "background: linear-gradient(135deg, #1f1f2e, #141419); border-radius: 15px; padding: 12px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); border: 1px solid #333; cursor: pointer;";
-            sponsoredCard.onclick = () => window.open(SMARTLINK_URL, '_blank');
+
+
+        // ========================================
+        // প্রতি ৪টি ভিডিওর পর Sponsored Card
+        // ========================================
+
+        if (
+            index > 0 &&
+            index % 4 === 0
+        ) {
+
+            const sponsoredCard =
+                document.createElement(
+                    "div"
+                );
+
+            sponsoredCard.className =
+                "video-card sponsored-card";
+
+            sponsoredCard.style.cssText =
+                "background: linear-gradient(135deg, #1f1f2e, #141419); border-radius: 15px; padding: 12px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); border: 1px solid #333; cursor: pointer;";
+
+            sponsoredCard.onclick =
+                () =>
+                    window.open(
+                        SMARTLINK_URL,
+                        '_blank'
+                    );
+
 
             sponsoredCard.innerHTML = `
+
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                    <span style="color: #ff3366; font-size: 11px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;">🔥 Sponsored Exclusive Stream</span>
-                    <span style="background: rgba(255,51,102,0.2); color: #ff3366; font-size: 10px; padding: 2px 8px; border-radius: 4px; font-weight: bold;">Ad</span>
+
+                    <span style="color: #ff3366; font-size: 11px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;">
+                        🔥 Sponsored Exclusive Stream
+                    </span>
+
+                    <span style="background: rgba(255,51,102,0.2); color: #ff3366; font-size: 10px; padding: 2px 8px; border-radius: 4px; font-weight: bold;">
+                        Ad
+                    </span>
+
                 </div>
+
+
                 <div style="position: relative; width: 100%; height: 280px; background: #000; border-radius: 10px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+
                     <div style="position: absolute; inset: 0; background: url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=640&auto=format&fit=crop') center/cover; opacity: 0.5;"></div>
+
                     <div style="position: relative; z-index: 2; width: 65px; height: 65px; background: rgba(255, 0, 80, 0.9); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(0,0,0,0.6);">
+
                         <div style="width: 0; height: 0; border-top: 12px solid transparent; border-bottom: 12px solid transparent; border-left: 22px solid #fff; margin-left: 4px;"></div>
+
                     </div>
+
                 </div>
+
+
                 <div style="margin-top: 12px; display: flex; justify-content: space-between; align-items: center;">
-                    <div style="color: #fff; font-size: 14px; font-weight: 500;">⚡ Viral Special Video HD (Click to Play)</div>
-                    <button style="background: #ff3366; border: none; color: #fff; padding: 7px 15px; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer;">Watch Now</button>
+
+                    <div style="color: #fff; font-size: 14px; font-weight: 500;">
+                        ⚡ Viral Special Video HD (Click to Play)
+                    </div>
+
+                    <button style="background: #ff3366; border: none; color: #fff; padding: 7px 15px; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer;">
+                        Watch Now
+                    </button>
+
                 </div>
             `;
-            container.appendChild(sponsoredCard);
+
+
+            container.appendChild(
+                sponsoredCard
+            );
         }
 
-        const cleanTitle = video.title ? video.title.replace(/\.(mp4|mkv|mov|avi|webm)$/i, "") : "Untitled Video";
-        const hasLiked = localStorage.getItem(LIKE_STORAGE_KEY + video.id);
-        const stats = getPseudoRandomStats(video.id);
-        const storedLikes = localStorage.getItem(LIKE_STORAGE_KEY + video.id + "_count");
-        const totalLikes = storedLikes ? parseInt(storedLikes) : stats.likes;
-        const thumbnailUrl = `https://drive.google.com/thumbnail?id=${video.driveId}&sz=w1000`;
 
-        const card = document.createElement("div");
-        card.className = "video-card";
+        // ========================================
+        // VIDEO DATA
+        // ========================================
+
+        const cleanTitle =
+            video.title
+                ? video.title.replace(
+                    /\.(mp4|mkv|mov|avi|webm)$/i,
+                    ""
+                )
+                : "Untitled Video";
+
+
+        const hasLiked =
+            localStorage.getItem(
+                LIKE_STORAGE_KEY + video.id
+            );
+
+
+        const stats =
+            getPseudoRandomStats(
+                video.id
+            );
+
+
+        const storedLikes =
+            localStorage.getItem(
+                LIKE_STORAGE_KEY +
+                video.id +
+                "_count"
+            );
+
+
+        const totalLikes =
+            storedLikes
+                ? parseInt(storedLikes)
+                : stats.likes;
+
+
+        const thumbnailUrl =
+            `https://drive.google.com/thumbnail?id=${video.driveId}&sz=w1000`;
+
+
+        // ========================================
+        // VIDEO CARD
+        // ========================================
+
+        const card =
+            document.createElement(
+                "div"
+            );
+
+
+        card.className =
+            "video-card movie-card-with-side-ads";
+
+
         card.innerHTML = `
-            <div class="video-player-wrapper" style="position: relative; width: 100%; height: 390px; background: #000; border-radius: 12px; overflow: hidden; cursor: pointer;" onclick="playVideo(this, '${video.driveId}')">
-                <img src="${thumbnailUrl}" alt="Thumbnail" loading="lazy" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=640&auto=format&fit=crop'">
-                
-                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 65px; height: 65px; background: rgba(255, 0, 80, 0.9); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(0,0,0,0.6);">
-                    <div style="width: 0; height: 0; border-top: 12px solid transparent; border-bottom: 12px solid transparent; border-left: 22px solid #fff; margin-left: 4px;"></div>
+
+            <div
+                class="video-player-wrapper"
+                style="position: relative; width: 100%; height: 390px; background: #000; border-radius: 12px; overflow: hidden; cursor: pointer;"
+                onclick="playVideo(this, '${video.driveId}')"
+            >
+
+                <img
+                    src="${thumbnailUrl}"
+                    alt="Thumbnail"
+                    loading="lazy"
+                    style="width: 100%; height: 100%; object-fit: cover;"
+                    onerror="this.src='https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=640&auto=format&fit=crop'"
+                >
+
+
+                <div
+                    style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 65px; height: 65px; background: rgba(255, 0, 80, 0.9); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(0,0,0,0.6);"
+                >
+
+                    <div
+                        style="width: 0; height: 0; border-top: 12px solid transparent; border-bottom: 12px solid transparent; border-left: 22px solid #fff; margin-left: 4px;"
+                    ></div>
+
                 </div>
+
             </div>
-            <div class="video-info" style="padding: 10px 0;">
-                <div class="video-title" style="color: #fff; font-size: 15px; font-weight: 500; word-break: break-word;">${cleanTitle}</div>
-                <div class="video-meta-row" style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
-                    <span class="view-count" style="color: #aaa; font-size: 13px;">👁️ ${formatNumber(stats.views)} Views</span>
-                    <button class="like-btn ${hasLiked ? 'liked' : ''}" onclick="event.stopPropagation(); toggleLike('${video.id}', this)" style="background: #2a2a35; border: 1px solid #3a3a45; color: #fff; padding: 6px 14px; border-radius: 20px; cursor: pointer; font-size: 13px; transition: 0.2s;">
-                        ❤️ <span class="like-count">${formatNumber(totalLikes)}</span> Like
+
+
+            <div
+                class="video-info"
+                style="padding: 10px 0;"
+            >
+
+                <div
+                    class="video-title"
+                    style="color: #fff; font-size: 15px; font-weight: 500; word-break: break-word;"
+                >
+                    ${cleanTitle}
+                </div>
+
+
+                <div
+                    class="video-meta-row"
+                    style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;"
+                >
+
+                    <span
+                        class="view-count"
+                        style="color: #aaa; font-size: 13px;"
+                    >
+                        👁️ ${formatNumber(stats.views)} Views
+                    </span>
+
+
+                    <button
+                        class="like-btn ${hasLiked ? 'liked' : ''}"
+                        onclick="event.stopPropagation(); toggleLike('${video.id}', this)"
+                        style="background: #2a2a35; border: 1px solid #3a3a45; color: #fff; padding: 6px 14px; border-radius: 20px; cursor: pointer; font-size: 13px; transition: 0.2s;"
+                    >
+                        ❤️
+                        <span class="like-count">
+                            ${formatNumber(totalLikes)}
+                        </span>
+                        Like
                     </button>
+
                 </div>
+
             </div>
-            <div class="ad-banner-wrapper" style="margin-top: 12px; text-align: center; min-height: 50px;"></div>
+
+
+            <!-- EXISTING BOTTOM AD -->
+
+            <div
+                class="ad-banner-wrapper"
+                style="margin-top: 12px; text-align: center; min-height: 50px;"
+            ></div>
+
         `;
 
-        // ব্যানার অ্যাড ইনজেকশন
-        const adWrapper = card.querySelector('.ad-banner-wrapper');
-        const adIframe = document.createElement('iframe');
-        adIframe.style.cssText = 'width: 320px; height: 50px; border: none; overflow: hidden; background: transparent;';
-        adIframe.scrolling = 'no';
-        adIframe.srcdoc = `<html><body style="margin:0;padding:0;background:transparent;text-align:center;"><script>atOptions = {'key' : '1519cc1e96aca6e61289dafed23cfc54', 'format' : 'iframe', 'height' : 50, 'width' : 320, 'params' : {}};<\/script><script src="https://www.highrevenueformat.com/1519cc1e96aca6e61289dafed23cfc54/invoke.js"><\/script></body></html>`;
-        adWrapper.appendChild(adIframe);
 
-        container.appendChild(card);
+        // ========================================
+        // EXISTING BOTTOM AD
+        // ========================================
+
+        const adWrapper =
+            card.querySelector(
+                '.ad-banner-wrapper'
+            );
+
+
+        const adIframe =
+            document.createElement(
+                'iframe'
+            );
+
+
+        adIframe.style.cssText =
+            'width: 320px; height: 50px; border: none; overflow: hidden; background: transparent;';
+
+
+        adIframe.scrolling = 'no';
+
+
+        adIframe.srcdoc = `
+<html>
+<body
+style="
+margin:0;
+padding:0;
+background:transparent;
+text-align:center;
+">
+
+<script>
+
+var atOptions = {
+    'key' : '1519cc1e96aca6e61289dafed23cfc54',
+    'format' : 'iframe',
+    'height' : 50,
+    'width' : 320,
+    'params' : {}
+};
+
+<\/script>
+
+<script src="https://www.highrevenueformat.com/1519cc1e96aca6e61289dafed23cfc54/invoke.js"><\/script>
+
+</body>
+</html>
+`;
+
+
+        adWrapper.appendChild(
+            adIframe
+        );
+
+
+        // ========================================
+        // দুই পাশের নতুন AD
+        // ========================================
+
+        const leftSideAd =
+            createSideAd("left");
+
+
+        const rightSideAd =
+            createSideAd("right");
+
+
+        card.appendChild(
+            leftSideAd
+        );
+
+
+        card.appendChild(
+            rightSideAd
+        );
+
+
+        // ========================================
+        // CARD CONTAINER-এ যোগ
+        // ========================================
+
+        container.appendChild(
+            card
+        );
+
     });
+
 
     setupVideoScrollControl();
 }
 
-// গুগল ড্রাইভের পপ-আউট বাটন ব্লক করার ফাংশন
-window.playVideo = function(wrapperElement, driveId) {
+
+// ============================================
+// গুগল ড্রাইভের ভিডিও প্লেয়ার
+// ============================================
+
+window.playVideo =
+function (
+    wrapperElement,
+    driveId
+) {
+
     wrapperElement.innerHTML = `
-        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative;">
-            <div style="position: absolute; top: 0; right: 0; width: 120px; height: 120px; z-index: 99999; background: transparent; pointer-events: auto;" onclick="event.stopPropagation(); event.preventDefault();"></div>
-            
-            <iframe class="drive-iframe" src="https://drive.google.com/file/d/${driveId}/preview?autoplay=1" 
-                    allow="autoplay; fullscreen" 
-                    allowfullscreen="true" 
-                    frameborder="0" 
-                    style="width: 100%; height: 100%; border: none;">
+
+        <div
+            style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative;"
+        >
+
+            <div
+                style="position: absolute; top: 0; right: 0; width: 120px; height: 120px; z-index: 99999; background: transparent; pointer-events: auto;"
+                onclick="event.stopPropagation(); event.preventDefault();"
+            ></div>
+
+
+            <iframe
+                class="drive-iframe"
+                src="https://drive.google.com/file/d/${driveId}/preview?autoplay=1"
+                allow="autoplay; fullscreen"
+                allowfullscreen="true"
+                frameborder="0"
+                style="width: 100%; height: 100%; border: none;"
+            >
             </iframe>
+
         </div>
-        <div class="custom-video-controls" style="position: absolute; bottom: 0; left: 0; width: 100%; height: 45px; background: linear-gradient(0deg, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.6) 60%, transparent 100%); z-index: 40; display: flex; align-items: center; justify-content: space-between; padding: 0 15px; pointer-events: auto;" onclick="event.stopPropagation();">
-            <span style="color: #ff3366; font-size: 13px; font-weight: bold;">▶ Playing Stream</span>
-            <button class="custom-fullscreen-btn" style="background: rgba(255,255,255,0.12); border: none; color: #fff; font-size: 12px; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-weight: bold;" onclick="toggleInternalFullscreen(this.closest('.video-player-wrapper'))">⛶ Fullscreen</button>
+
+
+        <div
+            class="custom-video-controls"
+            style="position: absolute; bottom: 0; left: 0; width: 100%; height: 45px; background: linear-gradient(0deg, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.6) 60%, transparent 100%); z-index: 40; display: flex; align-items: center; justify-content: space-between; padding: 0 15px; pointer-events: auto;"
+            onclick="event.stopPropagation();"
+        >
+
+            <span
+                style="color: #ff3366; font-size: 13px; font-weight: bold;"
+            >
+                ▶ Playing Stream
+            </span>
+
+
+            <button
+                class="custom-fullscreen-btn"
+                style="background: rgba(255,255,255,0.12); border: none; color: #fff; font-size: 12px; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-weight: bold;"
+                onclick="toggleInternalFullscreen(this.closest('.video-player-wrapper'))"
+            >
+                ⛶ Fullscreen
+            </button>
+
         </div>
+
     `;
+
     wrapperElement.onclick = null;
 };
 
-window.toggleInternalFullscreen = function(wrapper) {
+
+// ============================================
+// INTERNAL FULLSCREEN
+// ============================================
+
+window.toggleInternalFullscreen =
+function (wrapper) {
+
     if (wrapper.requestFullscreen) {
+
         wrapper.requestFullscreen();
-    } else if (wrapper.webkitRequestFullscreen) {
+
+    } else if (
+        wrapper.webkitRequestFullscreen
+    ) {
+
         wrapper.webkitRequestFullscreen();
-    } else if (wrapper.mozRequestFullscreen) {
+
+    } else if (
+        wrapper.mozRequestFullscreen
+    ) {
+
         wrapper.mozRequestFullscreen();
-    } else if (wrapper.msRequestFullscreen) {
+
+    } else if (
+        wrapper.msRequestFullscreen
+    ) {
+
         wrapper.msRequestFullscreen();
+
     }
+
 };
 
-// স্ক্রিন থেকে ভিডিও সরে গেলে বা ফিরে আসলে অটো পজ/প্লে কন্ট্রোল
-function setupVideoScrollControl() {
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            const iframe = entry.target.querySelector('.drive-iframe');
-            if (iframe) {
-                if (!entry.isIntersecting) {
-                    if (iframe.src) {
-                        iframe.dataset.currentSrc = iframe.src;
-                        iframe.src = "";
-                    }
-                } else {
-                    if (!iframe.src && iframe.dataset.currentSrc) {
-                        iframe.src = iframe.dataset.currentSrc;
-                    }
-                }
-            }
-        });
-    }, { threshold: 0.5 });
 
-    document.querySelectorAll('.video-card').forEach(card => {
-        observer.observe(card);
-    });
+// ============================================
+// VIDEO SCROLL CONTROL
+// ============================================
+
+function setupVideoScrollControl() {
+
+    const observer =
+        new IntersectionObserver(
+            (entries) => {
+
+                entries.forEach(
+                    entry => {
+
+                        const iframe =
+                            entry.target.querySelector(
+                                '.drive-iframe'
+                            );
+
+
+                        if (iframe) {
+
+                            if (
+                                !entry.isIntersecting
+                            ) {
+
+                                if (iframe.src) {
+
+                                    iframe.dataset.currentSrc =
+                                        iframe.src;
+
+                                    iframe.src = "";
+
+                                }
+
+                            } else {
+
+                                if (
+                                    !iframe.src &&
+                                    iframe.dataset.currentSrc
+                                ) {
+
+                                    iframe.src =
+                                        iframe.dataset.currentSrc;
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+                );
+
+            },
+            {
+                threshold: 0.5
+            }
+        );
+
+
+    document
+        .querySelectorAll(
+            '.video-card'
+        )
+        .forEach(
+            card =>
+                observer.observe(card)
+        );
 }
 
-// বাংলা ভাইরাল টেক্সট হেডার আপডেট
-document.addEventListener("DOMContentLoaded", () => {
-    const searchInput = document.getElementById("searchInput");
-    if (searchInput) {
-        searchInput.outerHTML = '<div style="text-align: center; color: #ff3366; font-size: 18px; font-weight: bold; padding: 12px; background: rgba(255,255,255,0.05); border-radius: 8px; margin-bottom: 15px;">বাংলা ভাইরাল ভিডিও 🔥🍆💦</div>';
-    }
-});
 
-// লাইক টগল ও লোকাল স্টোরেজ আপডেট
-function toggleLike(videoId, btnElement) {
-    const hasLiked = localStorage.getItem(LIKE_STORAGE_KEY + videoId);
-    const countSpan = btnElement.querySelector(".like-count");
-    let stats = getPseudoRandomStats(videoId);
-    let currentLikes = parseInt(localStorage.getItem(LIKE_STORAGE_KEY + videoId + "_count")) || stats.likes;
+// ============================================
+// বাংলা ভাইরাল টেক্সট হেডার
+// ============================================
+
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
+
+        const searchInput =
+            document.getElementById(
+                "searchInput"
+            );
+
+
+        if (searchInput) {
+
+            searchInput.outerHTML =
+                '<div style="text-align: center; color: #ff3366; font-size: 18px; font-weight: bold; padding: 12px; background: rgba(255,255,255,0.05); border-radius: 8px; margin-bottom: 15px;">বাংলা ভাইরাল ভিডিও 🔥🍆💦</div>';
+
+        }
+
+    }
+);
+
+
+// ============================================
+// LIKE TOGGLE
+// ============================================
+
+function toggleLike(
+    videoId,
+    btnElement
+) {
+
+    const hasLiked =
+        localStorage.getItem(
+            LIKE_STORAGE_KEY +
+            videoId
+        );
+
+
+    const countSpan =
+        btnElement.querySelector(
+            ".like-count"
+        );
+
+
+    let stats =
+        getPseudoRandomStats(
+            videoId
+        );
+
+
+    let currentLikes =
+        parseInt(
+            localStorage.getItem(
+                LIKE_STORAGE_KEY +
+                videoId +
+                "_count"
+            )
+        ) || stats.likes;
+
 
     if (hasLiked) {
-        localStorage.removeItem(LIKE_STORAGE_KEY + videoId);
-        let newLikes = currentLikes - 1;
-        localStorage.setItem(LIKE_STORAGE_KEY + videoId + "_count", newLikes);
-        btnElement.classList.remove("liked");
-        countSpan.textContent = formatNumber(newLikes);
+
+        localStorage.removeItem(
+            LIKE_STORAGE_KEY +
+            videoId
+        );
+
+
+        let newLikes =
+            currentLikes - 1;
+
+
+        localStorage.setItem(
+            LIKE_STORAGE_KEY +
+            videoId +
+            "_count",
+            newLikes
+        );
+
+
+        btnElement.classList.remove(
+            "liked"
+        );
+
+
+        countSpan.textContent =
+            formatNumber(newLikes);
+
     } else {
-        localStorage.setItem(LIKE_STORAGE_KEY + videoId, "true");
-        let newLikes = currentLikes + 1;
-        localStorage.setItem(LIKE_STORAGE_KEY + videoId + "_count", newLikes);
-        btnElement.classList.add("liked");
-        countSpan.textContent = formatNumber(newLikes);
+
+        localStorage.setItem(
+            LIKE_STORAGE_KEY +
+            videoId,
+            "true"
+        );
+
+
+        let newLikes =
+            currentLikes + 1;
+
+
+        localStorage.setItem(
+            LIKE_STORAGE_KEY +
+            videoId +
+            "_count",
+            newLikes
+        );
+
+
+        btnElement.classList.add(
+            "liked"
+        );
+
+
+        countSpan.textContent =
+            formatNumber(newLikes);
+
     }
-                }
+
+        }
