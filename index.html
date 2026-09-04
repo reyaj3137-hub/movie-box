@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Movie Box - Viral Videos & বাংলা ভাইরাল ভিডিও স্ট্রিমিং</title>
     
+    <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-NRJMYDTG9V"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -26,6 +27,22 @@
             font-family: sans-serif;
             margin: 0;
             padding: 15px;
+            padding-top: 60px; /* উপরের ভাসমান বারের জন্য স্পেস */
+        }
+        /* ওয়েবসাইটের উপরে ভাসমান বা স্টিকি অ্যাড বার */
+        .floating-top-ad {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: #18181f;
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 6px 0;
+            border-bottom: 1px solid #2a2a35;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.6);
         }
         .app-container {
             max-width: 500px;
@@ -47,6 +64,52 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.4);
             border: 1px solid #2a2a35;
         }
+        /* নেটিভ ব্যানারকে ভিডিওর মতো লুক দেওয়ার বক্স */
+        .ad-video-box {
+            position: relative;
+            background: #18181f;
+            border-radius: 15px;
+            padding: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+            border: 1px solid #2a2a35;
+            overflow: hidden;
+        }
+        /* ভিডিওর ওপর সুন্দর প্লে বাটন ওভারলে */
+        .play-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.25);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            pointer-events: none; /* ক্লিক সরাসরি নিচের অ্যাডে চলে যাওয়ার জন্য */
+            z-index: 10;
+            border-radius: 15px;
+        }
+        .fake-play-btn {
+            width: 60px;
+            height: 60px;
+            background: #ff3366;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(255, 51, 102, 0.6);
+        }
+        .fake-play-btn::after {
+            content: '';
+            display: block;
+            width: 0;
+            height: 0;
+            border-top: 12px solid transparent;
+            border-bottom: 12px solid transparent;
+            border-left: 20px solid #fff;
+            margin-left: 4px;
+        }
         .status-msg {
             text-align: center;
             padding: 30px;
@@ -56,14 +119,29 @@
 </head>
 <body>
 
+    <!-- উপরে ভাসমান অ্যাড সেকশন -->
+    <div class="floating-top-ad">
+        <!-- এখানে আপনার ছোট ব্যানার বা টপ অ্যাড রাখতে পারেন -->
+    </div>
+
     <div class="app-container">
         <div class="app-header">MOVIE BOX</div>
         
         <input type="text" id="searchInput" style="display:none;">
         
+        <!-- মূল ভিডিও কন্টেইনার -->
         <div id="videoContainer"></div>
+
+        <!-- নেটিভ ব্যানার অ্যাড (ভিডিওর মতো প্লে বাটনসহ) -->
+        <div class="ad-video-box">
+            <div class="play-overlay">
+                <div class="fake-play-btn"></div>
+            </div>
+            <div id="container-2ac039b86eb14a98f23d5820729446aa"></div>
+        </div>
+        <script async="async" data-cfasync="false" src="https://pl31094026.profitableratecpmnetwork.com/2ac039b86eb14a98f23d5820729446aa/invoke.js"></script>
     </div>
 
     <script src="script.js"></script>
 </body>
-</html>
+    </html>
