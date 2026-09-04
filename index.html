@@ -57,140 +57,125 @@
             color: #aaa;
         }
 
-        /* ===== TOP FLOATING AD ===== */
 
-        #topFloatingAd {
+        /* =====================================
+           FLOATING AD - SCREEN CENTER
+           ===================================== */
+
+        #floatingAd {
             position: fixed;
-            top: 0;
+
+            /* স্ক্রিনের ঠিক মাঝখানে */
+            top: 50%;
             left: 50%;
-            transform: translateX(-50%);
-            width: min(728px, 100vw);
+            transform: translate(-50%, -50%);
+
+            width: min(728px, 95vw);
             min-height: 90px;
-            background: #fff;
-            z-index: 2147483000;
+
+            background: #ffffff;
+
+            z-index: 999999;
+
             display: flex;
-            align-items: center;
             justify-content: center;
+            align-items: center;
+
+            box-shadow: 0 4px 20px rgba(0,0,0,0.55);
+
+            border-radius: 4px;
+
             overflow: visible;
-            box-shadow: 0 2px 12px rgba(0,0,0,.35);
         }
 
-        #topFloatingAd .top-ad-content {
+        #floatingAdContent {
             width: 100%;
             min-height: 90px;
+
             display: flex;
-            align-items: center;
             justify-content: center;
+            align-items: center;
         }
 
-        #topFloatingAd .top-ad-close {
+
+        /* Close Button */
+
+        #floatingAdClose {
             display: none;
+
             position: absolute;
-            right: 5px;
-            top: 5px;
-            width: 30px;
-            height: 30px;
-            border: 0;
+
+            top: -15px;
+            right: -15px;
+
+            width: 34px;
+            height: 34px;
+
+            border: none;
             border-radius: 50%;
-            background: rgba(0,0,0,.78);
+
+            background: #222;
             color: #fff;
-            font-size: 22px;
-            line-height: 30px;
-            padding: 0;
+
+            font-size: 23px;
+            font-weight: bold;
+
+            line-height: 34px;
+            text-align: center;
+
             cursor: pointer;
-            z-index: 2147483001;
+
+            z-index: 1000000;
+
+            padding: 0;
         }
 
-        /* ===== TWO SIDE ADS FOR EVERY VIDEO ===== */
-
-        .video-card {
-            position: relative;
+        #floatingAdClose:hover {
+            background: #000;
         }
 
-        .movie-side-ad {
-            position: absolute;
-            top: 50%;
-            width: 50px;
-            height: 320px;
-            z-index: 50;
-            overflow: visible;
-            pointer-events: auto;
-        }
 
-        .movie-side-ad.left {
-            left: -58px;
-            transform: translateY(-50%);
-        }
+        /* মোবাইল */
 
-        .movie-side-ad.right {
-            right: -58px;
-            transform: translateY(-50%);
-        }
+        @media (max-width: 600px) {
 
-        .movie-side-ad-inner {
-            width: 320px;
-            height: 50px;
-            position: absolute;
-            top: 135px;
-            left: -135px;
-            transform: rotate(90deg);
-            transform-origin: center center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-        }
-
-        .movie-side-ad.right .movie-side-ad-inner {
-            transform: rotate(-90deg);
-        }
-
-        @media (max-width: 620px) {
-
-            .movie-side-ad {
-                width: 42px;
-                height: 270px;
+            #floatingAd {
+                width: 95vw;
+                min-height: 70px;
             }
 
-            .movie-side-ad.left {
-                left: -48px;
+            #floatingAdContent {
+                min-height: 70px;
             }
 
-            .movie-side-ad.right {
-                right: -48px;
-            }
+            #floatingAdClose {
+                top: -12px;
+                right: -8px;
 
-            .movie-side-ad-inner {
-                top: 110px;
+                width: 32px;
+                height: 32px;
+
+                line-height: 32px;
+                font-size: 22px;
             }
         }
 
-        @media (max-width: 430px) {
-
-            .movie-side-ad.left {
-                left: -42px;
-            }
-
-            .movie-side-ad.right {
-                right: -42px;
-            }
-
-            .movie-side-ad {
-                width: 36px;
-            }
-        }
     </style>
 </head>
 
 <body>
 
-    <!-- ===== TOP FLOATING AD ===== -->
 
-    <div id="topFloatingAd">
+    <!-- =====================================
+         CENTER FLOATING AD
+         ===================================== -->
 
-        <div class="top-ad-content">
+    <div id="floatingAd">
 
-            <script async="async"
+        <div id="floatingAdContent">
+
+            <script
+                async="async"
                 data-cfasync="false"
                 src="https://pl31094026.profitableratecpmnetwork.com/2ac039b86eb14a98f23d5820729446aa/invoke.js">
             </script>
@@ -199,9 +184,12 @@
 
         </div>
 
+
+        <!-- Close Button -->
+
         <button
-            class="top-ad-close"
-            id="topAdClose"
+            id="floatingAdClose"
+            type="button"
             aria-label="Close advertisement">
             ×
         </button>
@@ -209,11 +197,14 @@
     </div>
 
 
+
+    <!-- =====================================
+         YOUR ORIGINAL WEBSITE
+         ===================================== -->
+
     <div class="app-container">
 
-        <div class="app-header">
-            MOVIE BOX
-        </div>
+        <div class="app-header">MOVIE BOX</div>
 
         <input type="text" id="searchInput" style="display:none;">
 
@@ -225,136 +216,57 @@
     <script src="script.js"></script>
 
 
+    <!-- =====================================
+         FLOATING AD CLOSE SYSTEM
+         ===================================== -->
+
     <script>
 
-    /* =========================================================
-       শুধু Advertisement-এর জন্য যোগ করা কোড
-       ========================================================= */
+        (function () {
 
-    (function () {
+            var floatingAd =
+                document.getElementById("floatingAd");
 
-        /* Top Ad-এর Close Button ৫ সেকেন্ড পরে আসবে */
-
-        var topAd = document.getElementById('topFloatingAd');
-        var topClose = document.getElementById('topAdClose');
-
-        setTimeout(function () {
-
-            if (topClose) {
-                topClose.style.display = 'block';
-            }
-
-        }, 5000);
+            var closeButton =
+                document.getElementById("floatingAdClose");
 
 
-        /* Close করলে শুধু Top Ad বন্ধ হবে */
+            /*
+             Close button ৫ সেকেন্ড পরে দেখাবে
+            */
 
-        if (topClose) {
+            setTimeout(function () {
 
-            topClose.addEventListener('click', function () {
+                if (closeButton) {
 
-                if (topAd) {
-                    topAd.remove();
+                    closeButton.style.display = "block";
+
                 }
 
-            });
-
-        }
+            }, 5000);
 
 
-        /* প্রত্যেক Video Card-এ দুই পাশের Ad যোগ */
+            /*
+             Close button চাপলে শুধু Ad বন্ধ হবে
+            */
 
-        function addSideAds(card) {
+            if (closeButton) {
 
-            if (!card || card.dataset.sideAdsAdded === '1') {
-                return;
-            }
+                closeButton.addEventListener("click", function () {
 
-            card.dataset.sideAdsAdded = '1';
+                    if (floatingAd) {
 
+                        floatingAd.remove();
 
-            ['left', 'right'].forEach(function (side) {
-
-                var ad = document.createElement('div');
-
-                ad.className = 'movie-side-ad ' + side;
-
-
-                var inner = document.createElement('div');
-
-                inner.className = 'movie-side-ad-inner';
-
-
-                inner.innerHTML =
-                    '<script>' +
-                    'atOptions = {' +
-                    '\'key\' : \'1519cc1e96aca6e61289dafed23cfc54\',' +
-                    '\'format\' : \'iframe\',' +
-                    '\'height\' : 50,' +
-                    '\'width\' : 320,' +
-                    '\'params\' : {}' +
-                    '};' +
-                    '<\/script>' +
-
-                    '<script src="https://www.highrevenueformat.com/1519cc1e96aca6e61289dafed23cfc54/invoke.js"><\/script>';
-
-
-                ad.appendChild(inner);
-
-                card.appendChild(ad);
-
-            });
-
-        }
-
-
-        /* Video Card খুঁজে বের করা */
-
-        function scanVideoCards() {
-
-            document
-                .querySelectorAll('#videoContainer .video-card')
-                .forEach(addSideAds);
-
-        }
-
-
-        /*
-         script.js নতুন Video Card তৈরি করলেও
-         সেটার মধ্যে automatically দুই পাশের Ad বসবে
-        */
-
-        var videoContainer =
-            document.getElementById('videoContainer');
-
-
-        if (videoContainer) {
-
-            var observer =
-                new MutationObserver(function () {
-
-                    scanVideoCards();
+                    }
 
                 });
 
+            }
 
-            observer.observe(videoContainer, {
-
-                childList: true,
-                subtree: true
-
-            });
-
-        }
-
-
-        /* Page load হওয়ার পর existing card-এ Ad বসানো */
-
-        scanVideoCards();
-
-    })();
+        })();
 
     </script>
 
 </body>
-      </html>
+</html>
