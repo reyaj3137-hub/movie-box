@@ -1,147 +1,103 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Movie Box - Viral Videos & বাংলা ভাইরাল ভিডিও স্ট্রিমিং</title>
-    
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-NRJMYDTG9V"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-
-      gtag('config', 'G-NRJMYDTG9V');
-    </script>
-    
-    <meta name="description" content="Watch viral videos, hot trending streams, and বাংলা ভাইরাল ভিডিও online in HD quality. Best video streaming platform.">
-    <meta name="keywords" content="viral videos, hot streams, trending clips, বাংলা ভাইরাল ভিডিও, video streaming">
-
-    <meta name="google-site-verification" content="ihjoW37gTzmEshVOHUNdxKuq4Yj0Zwq0rp4yZm9QGR4" />
-
-    <style>
-        body {
-            background-color: #121216;
-            color: #fff;
-            font-family: sans-serif;
-            margin: 0;
-            padding: 15px;
-            padding-top: 60px; /* উপরের ভাসমান বারের জন্য স্পেস */
-        }
-        /* ওয়েবসাইটের উপরে ভাসমান বা স্টিকি অ্যাড বার */
-        .floating-top-ad {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            background: #18181f;
-            z-index: 1000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 6px 0;
-            border-bottom: 1px solid #2a2a35;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.6);
-        }
-        .app-container {
-            max-width: 500px;
-            margin: 0 auto;
-        }
-        .app-header {
-            text-align: center;
-            font-size: 24px;
-            font-weight: bold;
-            color: #ff3366;
-            margin-bottom: 15px;
-            letter-spacing: 1px;
-        }
-        .video-card {
-            background: #18181f;
-            border-radius: 15px;
-            padding: 12px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-            border: 1px solid #2a2a35;
-        }
-        /* নেটিভ ব্যানারকে ভিডিওর মতো লুক দেওয়ার বক্স */
-        .ad-video-box {
-            position: relative;
-            background: #18181f;
-            border-radius: 15px;
-            padding: 12px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-            border: 1px solid #2a2a35;
-            overflow: hidden;
-        }
-        /* ভিডিওর ওপর সুন্দর প্লে বাটন ওভারলে */
-        .play-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.25);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            pointer-events: none; /* ক্লিক সরাসরি নিচের অ্যাডে চলে যাওয়ার জন্য */
-            z-index: 10;
-            border-radius: 15px;
-        }
-        .fake-play-btn {
-            width: 60px;
-            height: 60px;
-            background: #ff3366;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            box-shadow: 0 4px 15px rgba(255, 51, 102, 0.6);
-        }
-        .fake-play-btn::after {
-            content: '';
-            display: block;
-            width: 0;
-            height: 0;
-            border-top: 12px solid transparent;
-            border-bottom: 12px solid transparent;
-            border-left: 20px solid #fff;
-            margin-left: 4px;
-        }
-        .status-msg {
-            text-align: center;
-            padding: 30px;
-            color: #aaa;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Movie Box</title>
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0;
+  padding:110px 15px 20px;
+  background:#121216;
+  color:#fff;
+  font-family:Arial,sans-serif;
+}
+.app-container{max-width:500px;margin:auto}
+.app-header{
+  text-align:center;font-size:24px;font-weight:700;
+  color:#ff3366;margin:0 0 18px;
+}
+.video-card{
+  background:#18181f;border:1px solid #2a2a35;
+  border-radius:15px;padding:14px;margin-bottom:15px;
+}
+.demo-video{
+  height:160px;border-radius:10px;
+  background:linear-gradient(135deg,#292936,#17171d);
+  display:flex;align-items:center;justify-content:center;
+  color:#aaa;
+}
+#topAdWrapper{
+  position:fixed;z-index:99999;top:0;left:0;width:100%;
+  display:flex;justify-content:center;padding:0;
+}
+#topAdBox{
+  position:relative;width:min(728px,100%);
+  min-height:90px;background:#fff;overflow:hidden;
+  box-shadow:0 3px 16px rgba(0,0,0,.5);
+}
+#topAdContent{
+  min-height:90px;width:100%;
+  display:flex;align-items:center;justify-content:center;
+  color:#777;text-align:center;
+}
+#closeAdBtn{
+  display:none;position:absolute;right:6px;top:6px;
+  width:30px;height:30px;border:0;border-radius:50%;
+  background:rgba(0,0,0,.78);color:#fff;font-size:22px;
+  line-height:30px;cursor:pointer;z-index:100000;
+}
+@media(max-width:600px){
+  body{padding-top:85px}
+  #topAdBox,#topAdContent{min-height:70px}
+}
+</style>
 </head>
 <body>
 
-    <!-- উপরে ভাসমান অ্যাড সেকশন -->
-    <div class="floating-top-ad">
-        <!-- এখানে আপনার ছোট ব্যানার বা টপ অ্যাড রাখতে পারেন -->
+<div id="topAdWrapper">
+  <div id="topAdBox">
+    <button id="closeAdBtn" aria-label="বিজ্ঞাপন বন্ধ করুন">×</button>
+
+    <div id="topAdContent">
+      <!-- তোমার আসল বিজ্ঞাপন -->
+      <script async="async" data-cfasync="false"
+        src="https://pl31094026.profitableratecpmnetwork.com/2ac039b86eb14a98f23d5820729446aa/invoke.js"></script>
+      <div id="container-2ac039b86eb14a98f23d5820729446aa"></div>
     </div>
+  </div>
+</div>
 
-    <div class="app-container">
-        <div class="app-header">MOVIE BOX</div>
-        
-        <input type="text" id="searchInput" style="display:none;">
-        
-        <!-- মূল ভিডিও কন্টেইনার -->
-        <div id="videoContainer"></div>
+<div class="app-container">
+  <div class="app-header">MOVIE BOX</div>
 
-        <!-- নেটিভ ব্যানার অ্যাড (ভিডিওর মতো প্লে বাটনসহ) -->
-        <div class="ad-video-box">
-            <div class="play-overlay">
-                <div class="fake-play-btn"></div>
-            </div>
-            <div id="container-2ac039b86eb14a98f23d5820729446aa"></div>
-        </div>
-        <script async="async" data-cfasync="false" src="https://pl31094026.profitableratecpmnetwork.com/2ac039b86eb14a98f23d5820729446aa/invoke.js"></script>
+  <div id="videoContainer">
+    <div class="video-card">
+      <div class="demo-video">তোমার ওয়েবসাইটের ভিডিও/কনটেন্ট এখানে থাকবে</div>
     </div>
+    <div class="video-card">
+      <div class="demo-video">আরও কনটেন্ট</div>
+    </div>
+  </div>
+</div>
 
-    <script src="script.js"></script>
+<script src="script.js"></script>
+
+<script>
+(function(){
+  const closeBtn = document.getElementById("closeAdBtn");
+  const adWrapper = document.getElementById("topAdWrapper");
+
+  setTimeout(function(){
+    closeBtn.style.display = "block";
+  }, 5000);
+
+  closeBtn.addEventListener("click", function(){
+    adWrapper.remove();
+  });
+})();
+</script>
+
 </body>
-    </html>
+</html>
