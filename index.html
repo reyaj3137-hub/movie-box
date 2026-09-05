@@ -4,33 +4,47 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Movie Box - Viral Videos & বাংলা ভাইরাল ভিডিও স্ট্রিমিং</title>
-
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-NRJMYDTG9V"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-
-      gtag('config', 'G-NRJMYDTG9V');
-    </script>
-
-    <meta name="description" content="Watch viral videos, hot trending streams, and বাংলা ভাইরাল ভিডিও online in HD quality. Best video streaming platform.">
-    <meta name="keywords" content="viral videos, hot streams, trending clips, বাংলা ভাইরাল ভিডিও, video streaming">
-
-    <meta name="google-site-verification" content="ihjoW37gTzmEshVOHUNdxKuq4Yj0Zwq0rp4yZm9QGR4" />
-
     <style>
         body {
             background-color: #121216;
             color: #fff;
             font-family: sans-serif;
             margin: 0;
-            padding: 15px;
+            padding: 0;
+            /* পুরো পেজটিকে হরিজেন্টাল স্ক্রোল করার সুবিধা দেওয়া */
+            overflow-x: auto; 
         }
 
-        .app-container {
-            max-width: 500px;
+        /* মূল বড় কন্টেইনার যা মোবাইল স্ক্রিনের চেয়ে চওড়া হবে (যেমন: ১১০০ পিক্সেল) */
+        .site-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            width: 1120px; /* ডানে, বামে এবং মাঝখਾਨের জায়গা মিলিয়ে */
             margin: 0 auto;
+            padding: 20px 10px;
+        }
+
+        /* বাম পাশের অ্যাড এরিয়া */
+        .side-ad-left {
+            width: 320px;
+            position: sticky;
+            top: 20px;
+            text-align: center;
+        }
+
+        /* মাঝখানের মূল ভিডিওর কন্টেইনার */
+        .app-container {
+            width: 450px;
+            margin: 0 15px;
+        }
+
+        /* ডান পাশের অ্যাড এরিয়া */
+        .side-ad-right {
+            width: 320px;
+            position: sticky;
+            top: 20px;
+            text-align: center;
         }
 
         .app-header {
@@ -56,116 +70,35 @@
             padding: 30px;
             color: #aaa;
         }
-
-        /* FLOATING AD - SCREEN CENTER */
-        #floatingAd {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: min(728px, 95vw);
-            min-height: 90px;
-            background: #ffffff;
-            z-index: 999999;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.55);
-            border-radius: 4px;
-            overflow: visible;
-        }
-
-        #floatingAdContent {
-            width: 100%;
-            min-height: 90px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        #floatingAdClose {
-            display: none;
-            position: absolute;
-            top: -15px;
-            right: -15px;
-            width: 34px;
-            height: 34px;
-            border: none;
-            border-radius: 50%;
-            background: #222;
-            color: #fff;
-            font-size: 23px;
-            font-weight: bold;
-            line-height: 34px;
-            text-align: center;
-            cursor: pointer;
-            z-index: 1000000;
-            padding: 0;
-        }
-
-        #floatingAdClose:hover {
-            background: #000;
-        }
-
-        @media (max-width: 600px) {
-            #floatingAd {
-                width: 95vw;
-                min-height: 70px;
-            }
-            #floatingAdContent {
-                min-height: 70px;
-            }
-            #floatingAdClose {
-                top: -12px;
-                right: -8px;
-                width: 32px;
-                height: 32px;
-                line-height: 32px;
-                font-size: 22px;
-            }
-        }
     </style>
 </head>
 
 <body>
 
-    <!-- CENTER FLOATING AD -->
-    <div id="floatingAd">
-        <div id="floatingAdContent">
-            <script async="async" data-cfasync="false" src="https://pl31094026.profitableratecpmnetwork.com/2ac039b86eb14a98f23d5820729446aa/invoke.js"></script>
-            <div id="container-2ac039b86eb14a98f23d5820729446aa"></div>
-        </div>
-        <button id="floatingAdClose" type="button" aria-label="Close advertisement">×</button>
-    </div>
+    <!-- পুরো সাইটটিকে চওড়া লেআউটে রাখার জন্য র‍্যাপার -->
+    <div class="site-wrapper">
 
-    <!-- YOUR WEBSITE CONTAINER -->
-    <div class="app-container">
-        <div class="app-header">MOVIE BOX</div>
-        <input type="text" id="searchInput" style="display:none;">
-        <div id="videoContainer"></div>
+        <!-- ১. বাম পাশের ব্যানার অ্যাড (320x50) -->
+        <div class="side-ad-left">
+            <div style="color: #ff3366; font-size: 12px; margin-bottom: 5px; font-weight: bold;">Sponsored Ad</div>
+            <iframe style="width: 320px; height: 50px; border: none; overflow: hidden; background: transparent;" scrolling="no" srcdoc="<html><body style='margin:0;padding:0;background:transparent;text-align:center;'><script>atOptions = {'key' : '1519cc1e96aca6e61289dafed23cfc54', 'format' : 'iframe', 'height' : 50, 'width' : 320, 'params' : {}};<\/script><script src='https://www.highrevenueformat.com/1519cc1e96aca6e61289dafed23cfc54/invoke.js'><\/script></body></html>"></iframe>
+        </div>
+
+        <!-- ২. মাঝখানের মূল ভিডিও সেকশন -->
+        <div class="app-container">
+            <div class="app-header">MOVIE BOX</div>
+            <div style="text-align: center; color: #ff3366; font-size: 18px; font-weight: bold; padding: 12px; background: rgba(255,255,255,0.05); border-radius: 8px; margin-bottom: 15px;">বাংলা ভাইরাল ভিডিও 🔥🍆💦</div>
+            <div id="videoContainer"></div>
+        </div>
+
+        <!-- ৩. ডান পাশের ব্যানার অ্যাড (320x50) -->
+        <div class="side-ad-right">
+            <div style="color: #ff3366; font-size: 12px; margin-bottom: 5px; font-weight: bold;">Sponsored Ad</div>
+            <iframe style="width: 320px; height: 50px; border: none; overflow: hidden; background: transparent;" scrolling="no" srcdoc="<html><body style='margin:0;padding:0;background:transparent;text-align:center;'><script>atOptions = {'key' : '1519cc1e96aca6e61289dafed23cfc54', 'format' : 'iframe', 'height' : 50, 'width' : 320, 'params' : {}};<\/script><script src='https://www.highrevenueformat.com/1519cc1e96aca6e61289dafed23cfc54/invoke.js'><\/script></body></html>"></iframe>
+        </div>
+
     </div>
 
     <script src="script.js"></script>
-
-    <script>
-        (function () {
-            var floatingAd = document.getElementById("floatingAd");
-            var closeButton = document.getElementById("floatingAdClose");
-
-            setTimeout(function () {
-                if (closeButton) {
-                    closeButton.style.display = "block";
-                }
-            }, 5000);
-
-            if (closeButton) {
-                closeButton.addEventListener("click", function () {
-                    if (floatingAd) {
-                        floatingAd.remove();
-                    }
-                });
-            }
-        })();
-    </script>
 </body>
-    </html>
+</html>
