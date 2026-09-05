@@ -163,13 +163,14 @@ function renderVideos(videos) {
                     </button>
                 </div>
             </div>
-            <div class="ad-banner-wrapper" style="margin-top: 12px; text-align: center; min-height: 50px;"></div>
+            <!-- ব্যানার অ্যাড কন্টেইনার ডানে-বামে স্ক্রোল করার সুবিধা সহ -->
+            <div class="ad-banner-wrapper" style="margin-top: 12px; text-align: center; min-height: 50px; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 5px;"></div>
         `;
 
-        // ব্যানার অ্যাড ইনজেকশন
+        // ব্যানার অ্যাড ইনজেকশন (320x50)
         const adWrapper = card.querySelector('.ad-banner-wrapper');
         const adIframe = document.createElement('iframe');
-        adIframe.style.cssText = 'width: 320px; height: 50px; border: none; overflow: hidden; background: transparent;';
+        adIframe.style.cssText = 'width: 320px; height: 50px; border: none; overflow: hidden; background: transparent; display: inline-block;';
         adIframe.scrolling = 'no';
         adIframe.srcdoc = `<html><body style="margin:0;padding:0;background:transparent;text-align:center;"><script>atOptions = {'key' : '1519cc1e96aca6e61289dafed23cfc54', 'format' : 'iframe', 'height' : 50, 'width' : 320, 'params' : {}};<\/script><script src="https://www.highrevenueformat.com/1519cc1e96aca6e61289dafed23cfc54/invoke.js"><\/script></body></html>`;
         adWrapper.appendChild(adIframe);
@@ -266,4 +267,4 @@ function toggleLike(videoId, btnElement) {
         btnElement.classList.add("liked");
         countSpan.textContent = formatNumber(newLikes);
     }
-                          }
+    }
