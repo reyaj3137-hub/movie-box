@@ -35,7 +35,7 @@ function injectSocialBar() {
     document.body.appendChild(script);
 }
 
-// ক্যাশ মেমোরি থেকে দ্রুত ভিডিও লোড করার সিস্টেম (সুপার ফাস্ট)
+// ক্যাশ মেমোরি থেকে দ্রুত ভিডিও লোড করার সিস্টেম
 function loadVideosInstantly() {
     const cachedData = sessionStorage.getItem(CACHE_KEY);
     if (cachedData) {
@@ -111,7 +111,6 @@ function renderVideos(videos) {
     }
 
     videos.forEach((video, index) => {
-        // প্রতি ৪টি ভিডিওর পর আপনার স্মার্টলিংকযুক্ত আকর্ষণীয় প্রমোশনাল/স্পন্সরড কার্ড ইনজেক্ট করা
         if (index > 0 && index % 4 === 0) {
             const sponsoredCard = document.createElement("div");
             sponsoredCard.className = "video-card sponsored-card";
@@ -163,16 +162,16 @@ function renderVideos(videos) {
                     </button>
                 </div>
             </div>
-            <!-- ব্যানার অ্যাড কন্টেইনার ডানে-বামে স্ক্রোল করার সুবিধা সহ -->
-            <div class="ad-banner-wrapper" style="margin-top: 12px; text-align: center; min-height: 50px; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 5px;"></div>
+            <!-- ব্যানার অ্যাড কন্টেইনার (সম্পূর্ণ লক করা) -->
+            <div class="ad-banner-wrapper"></div>
         `;
 
-        // ব্যানার অ্যাড ইনজেকশন (320x50)
+        // ব্যানার অ্যাড ইনজেকশন (320x50 - Fixed & Locked)
         const adWrapper = card.querySelector('.ad-banner-wrapper');
         const adIframe = document.createElement('iframe');
-        adIframe.style.cssText = 'width: 320px; height: 50px; border: none; overflow: hidden; background: transparent; display: inline-block;';
+        adIframe.style.cssText = 'width: 320px; height: 50px; border: none; overflow: hidden; background: transparent; display: block; margin: 0 auto; pointer-events: auto;';
         adIframe.scrolling = 'no';
-        adIframe.srcdoc = `<html><body style="margin:0;padding:0;background:transparent;text-align:center;"><script>atOptions = {'key' : '1519cc1e96aca6e61289dafed23cfc54', 'format' : 'iframe', 'height' : 50, 'width' : 320, 'params' : {}};<\/script><script src="https://www.highrevenueformat.com/1519cc1e96aca6e61289dafed23cfc54/invoke.js"><\/script></body></html>`;
+        adIframe.srcdoc = `<html><head><style>body { margin: 0; padding: 0; background: transparent; text-align: center; overflow: hidden; touch-action: none; }</style></head><body><script>atOptions = {'key' : '1519cc1e96aca6e61289dafed23cfc54', 'format' : 'iframe', 'height' : 50, 'width' : 320, 'params' : {}};<\/script><script src="https://www.highrevenueformat.com/1519cc1e96aca6e61289dafed23cfc54/invoke.js"><\/script></body></html>`;
         adWrapper.appendChild(adIframe);
 
         container.appendChild(card);
@@ -267,4 +266,4 @@ function toggleLike(videoId, btnElement) {
         btnElement.classList.add("liked");
         countSpan.textContent = formatNumber(newLikes);
     }
-    }
+        }
