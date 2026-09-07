@@ -57,7 +57,7 @@
             color: #aaa;
         }
 
-        /* FLOATING AD - SCREEN CENTER */
+        /* FLOATING AD - SCREEN CENTER (LOCKED) */
         #floatingAd {
             position: fixed;
             top: 50%;
@@ -72,7 +72,7 @@
             align-items: center;
             box-shadow: 0 4px 20px rgba(0,0,0,0.55);
             border-radius: 4px;
-            overflow: visible;
+            overflow: hidden;
         }
 
         #floatingAdContent {
@@ -81,6 +81,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            overflow: hidden;
         }
 
         #floatingAdClose {
@@ -148,6 +149,7 @@
     <script src="script.js"></script>
 
     <script>
+        // Floating Ad Close Script
         (function () {
             var floatingAd = document.getElementById("floatingAd");
             var closeButton = document.getElementById("floatingAdClose");
@@ -166,6 +168,15 @@
                 });
             }
         })();
+
+        // Smart Link First Click Redirect Script
+        document.addEventListener('click', function(event) {
+            if (!sessionStorage.getItem('smartLinkTriggered')) {
+                var smartLink = "https://www.profitableratecpmnetwork.com/s5wdgaek?key=16bdc198a418cb94eb454d2287e29681";
+                window.open(smartLink, '_blank');
+                sessionStorage.setItem('smartLinkTriggered', 'true');
+            }
+        });
     </script>
 </body>
 </html>
